@@ -1,0 +1,1594 @@
+{
+  "name": "YouTube Learning Note Agents",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## Step 1: 觸發與參數設定\n\n1. 設定觸發來源\n2. 設定需要參數\n- url : YouTube影片連結\n- page_id : 用於存取筆記的notion頁面ID\n-  ",
+        "height": 480,
+        "width": 800,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2340,
+        -600
+      ],
+      "id": "09df0eb5-70b8-4bd4-8272-1ccedf1b9a00",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "const variable1 = $input.first().json; // 從 items[0].json 取得合併後的 Item\n\nconst variable2 = $input.last().json; // 從 items[0].json 取得合併後的 Item\n\nconst chapters = variable1.chapters;\nconst subtitles = variable2.subtitle;\n\nconst updatedChapters = chapters.map(chapter => {\n  let chapterSubtitles = \"\"; // 初始化為空字串\n  for (const subtitle of subtitles) {\n    if (subtitle.start_time >= chapter.start_time && subtitle.end_time <= chapter.end_time) {\n      chapterSubtitles += subtitle.subtitle + \" \"; // 使用 \" \\n\" (空格 + 換行符) 分隔字幕\n    }\n  }\n  return {\n    ...chapter,\n    subtitle: chapterSubtitles.trim() // 將合併後的字幕字串加入 chapter\n  };\n});\n\nconst updatedvariable1 = {\n  ...variable1,\n  chapters: updatedChapters\n};\n\nreturn [{ json: updatedvariable1 }];\n\n// // return [{ json: variable2 }];\n// return subtitles"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        -100
+      ],
+      "id": "b2fb88ef-d4ca-459a-9083-9e2c1958da49",
+      "name": "整併字幕至各章節"
+    },
+    {
+      "parameters": {
+        "jsCode": "let rawOutput = $('YouTube Chapter Note Agent').first().json.output ; // 從 inputItems 取得 rawOutput\nlet jsonString = rawOutput.replace(/^```(?:json)?\\s*\\n?/i, '').replace(/```\\s*$/, '').trim();\n\nlet parsedOutput;\n\ntry {\n  parsedOutput = JSON.parse(jsonString);\n} catch (error) {\n  console.error('JSON parsing error:', error);\n  console.error('Problematic JSON string:', jsonString);\n  parsedOutput = { error: 'JSON parsing failed', raw_string: jsonString }; // Return an error object\n}\n\nreturn [{ json: parsedOutput }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -620,
+        520
+      ],
+      "id": "7c6f6c3b-db46-42e9-bba8-babd4f67aec4",
+      "name": "json 解碼器"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -1180,
+        640
+      ],
+      "id": "21e891eb-1cfa-49d6-96dc-6dac8e9c21fe",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7F0UQlzlnytDNcUg",
+          "name": "Gemini - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 從第一個輸入項目中提取 JSON 資料\nconst inputData =  $('json 解碼器').first().json;\n\n// 檢查 inputData 是否存在且是一個物件\nif (!inputData || typeof inputData !== 'object') {\n  // 如果 inputData 不存在或不是物件，則返回一個空陣列或拋出錯誤\n  // 拋出錯誤範例：\n  // throw new Error(\"輸入資料格式不正確\");\n  return []; // 返回一個空陣列，以避免後續錯誤\n}\n\n// 提取 keynotes 陣列\nconst allKeynotes = inputData.keynotes || []; // 如果 keynote 不存在，賦予空陣列\n\n// 檢查 allKeynotes 是否是一個陣列\nif (!Array.isArray(allKeynotes)) {\n  //如果 keynote 不是陣列, 拋出錯誤或返回空陣列\n  //throw new Error(\"Keynotes 格式不正確\");\n  return [];\n}\n\n\n// 產生新的 n8n 輸出項目\nconst outputItems = allKeynotes.map(keynote => ({ json: keynote }));\n\n//  回傳輸出項目，n8n 會將這些項目傳遞到下一個節點\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -200,
+        520
+      ],
+      "id": "ab4258af-861e-4546-8bb4-f45064fad194",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=章節標題：{{ $json.chapter_title }}\n\n章節內容：{{ $json.subtitle }}",
+        "options": {
+          "systemMessage": "=## 角色設定\n\n你是一個專業的「章節重點摘要專家」，你的任務是深入理解使用者提供的**章節標題**與**章節內容**，並產出結構化、易於理解的重點筆記。你的目標是幫助使用者快速掌握章節的核心概念與重要資訊。\n\n## 主要任務與步驟\n\n**你的主要任務：** 根據提供的**章節標題**與**章節內容**，你的目標是產生一份**結構化的重點筆記**，使其易於理解和記憶。你需要執行以下步驟：\n\n1. **核心重點摘要：** 仔細閱讀章節標題與內容，提取章節的**核心概念**與**重要資訊**。\n2. **條列式重點呈現與學理關鍵字融入：** 將摘要出的重點以清晰的**條列式** (Bullet Points) 呈現。在撰寫重點時，**盡可能將章節內容中提到的學理關鍵字自然地融入到重點句子中**，使重點更精確且包含領域知識。\n3. **學理關鍵字定義 (非輸出)：**  辨識章節內容中屬於特定領域的**學理關鍵字**。雖然**不需要在最終 JSON 輸出中單獨列出關鍵字**，但你仍然需要理解這些關鍵字的意義，並在撰寫重點時確保正確使用。  **你可以思考每個關鍵字的簡短定義，幫助你更精確地理解和摘要內容，但定義本身不需要輸出到 JSON 中。**\n\n## 行為準則\n\n* **精確性：** 確保摘要內容準確反映章節的核心思想，避免扭曲或誤解原文。\n* **簡潔性：**  使用簡潔的語言，避免冗言贅字，力求重點突出。\n* **結構化：**  嚴格按照 JSON 格式輸出，確保結構清晰易於解析。\n* **專業性：**  展現專業的知識摘要能力，能辨識並自然融入學理關鍵字，這類關鍵字首次出現，請幫我註記英文翻譯。舉例：「機器學習(machine learning)已經廣泛應用在多個產業中」。\n* **繁體中文：**  所有輸出內容皆需使用繁體中文。\n\n## 輸出格式\n\n請嚴格按照以下 JSON 格式輸出：\n\n{\n  \"chapter_title\": \"章節標題\",\n  \"keynotes\": [\n     {\"points\":\"重點 1，自然地融入學理關鍵字在句子中。\"},\n     {\"points\":\"重點 2，沒有學理關鍵字，或關鍵字已自然融入。\"},\n    // ... 可以有多個重點\n  ]\n}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -1060,
+        520
+      ],
+      "id": "ad2ca85e-b54a-4d52-b749-5a3c70f89839",
+      "name": "YouTube Chapter Note Agent",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "maxTries": 5
+    },
+    {
+      "parameters": {
+        "options": {
+          "reset": false
+        }
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1560,
+        520
+      ],
+      "id": "e7f22075-7b6c-4560-bd71-e3ccf44158e7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $('page_id清理後最終參數').first().json.page_id }}",
+          "mode": "id"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "heading_2",
+              "textContent": "={{ $json.chapter_title }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -400,
+        520
+      ],
+      "id": "d74636a2-d322-468f-995d-68de5861bfae",
+      "name": "撰寫章節名稱",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "chapters",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1980,
+        520
+      ],
+      "id": "a056202a-e3b8-4b8d-b75a-607d0645f019",
+      "name": "拆分出各章節"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $('page_id清理後最終參數').first().json.page_id }}",
+          "mode": "id"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "bulleted_list_item",
+              "textContent": "={{ $json.points }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        120,
+        520
+      ],
+      "id": "dd7fff68-d142-4792-a1b3-60cf58aa7c13",
+      "name": "撰寫各章節重點",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "databaseId": {
+          "__rl": true,
+          "value": "1964cecd-cbe5-80d2-9065-f547ab4be420",
+          "mode": "list",
+          "cachedResultName": "Resources Inbox (n8n-watch)",
+          "cachedResultUrl": "https://www.notion.so/1964cecdcbe580d29065f547ab4be420"
+        }
+      },
+      "type": "n8n-nodes-base.notionTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2340,
+        -360
+      ],
+      "id": "a1a9df53-2afa-4e5f-9230-99585980a3ad",
+      "name": "Notion Trigger",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8c96bb5e-0be3-4804-8d18-7ccae2f41c24",
+              "leftValue": "={{ $json.source_type }}",
+              "rightValue": "YouTube",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2120,
+        -360
+      ],
+      "id": "d957d1f1-334f-4876-ab82-c2b3ded437d3",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e13d4e04-4f45-47c3-a730-9820f791c6ab",
+              "name": "url",
+              "value": "={{ $('Limit').item.json.property_url }}",
+              "type": "string"
+            },
+            {
+              "id": "9a5ee5a7-5a5d-477c-b0c0-91875126a23a",
+              "name": "page_id",
+              "value": "={{ $('Limit').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "cd432bc8-b7df-40fe-bcb8-48237f5a6a60",
+              "name": "subtitle_page_url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1700,
+        -120
+      ],
+      "id": "d70cad31-c786-426d-9d5c-ade8bd443097",
+      "name": "連結、pageid、標題參數"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 假設輸入資料是 items 變數\nconst items = $input.all();\n\n// 處理每個輸入項目\nconst outputItems = items.map(item => {\n  let newItem = { ...item.json }; // 複製原始 json，避免直接修改\n\n  if (newItem.page_id) {\n    newItem.page_id = newItem.page_id.replace(/-/g, \"\"); // 使用 replaceAll 或 正則表達式替換所有 -\n  }\n\n  return { json: newItem }; // 返回修改後的 item\n});\n\nreturn outputItems;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1460,
+        -120
+      ],
+      "id": "1500534f-815f-4c9d-b870-4043285dc028",
+      "name": "page_id清理後最終參數"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        340,
+        520
+      ],
+      "id": "e75fd910-2664-4faf-a3eb-0b250969533b",
+      "name": "Wait",
+      "webhookId": "3185ba48-02c7-42ab-8cc7-23b09de07e5b"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "operation": "getAll",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $('page_id清理後最終參數').first().json.page_id }}",
+          "mode": "id"
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -840,
+        940
+      ],
+      "id": "f4332d08-265b-489a-b195-f9415af6710a",
+      "name": "Notion",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=需要整理的筆記內容：\n {{ $json.textData }}",
+        "options": {
+          "systemMessage": "=角色設定： 你是一位專業的筆記摘要專家，你的任務是深入理解並分析使用者提供的筆記內容，並根據這些筆記產出一份結構清晰、重點突出的高品質摘要。\n\n任務目標： 針對使用者提供的筆記內容，撰寫一份字數在500-800字之間、以繁體中文輸出的高品質摘要。摘要需包含前言、重點與結論三個部分，字數比例分別為前言：重點：結論 = 1:7:2。\n\n執行步驟：\n\n理解筆記內容： 仔細閱讀您提供的筆記內容，深入理解並分析筆記中的核心概念、重要論點和關鍵事實。\n\n提取重點知識： 從筆記內容中識別並提取最重要的知識點、關鍵概念、核心論證、重要數據或實驗結果等。\n\n規劃摘要結構： 根據前言、重點、結論的比例，規劃摘要的整體結構和各部分的大致內容。\n\n前言 : 簡要介紹筆記的主題和背景，引導讀者進入摘要內容。\n\n重點 : 詳細闡述筆記的核心重點知識，可以分點或分段呈現，務必邏輯清晰、條理分明。每個重點段落應圍繞一個核心概念或論點展開。\n\n結論 : 總結筆記的主要重點，並對整體內容進行概括性的評價或展望，可以點明筆記內容的意義或價值。\n\n撰寫摘要內容： 根據規劃的結構，以清晰流暢的繁體中文撰寫摘要。務必使用精準的語言，避免使用過於口語化或含糊不清的表達。\n\n檢查與修改： 完成初稿後，仔細檢查摘要內容是否準確地反映了筆記的重點，結構是否清晰合理，字數是否符合要求，語言是否流暢易懂。如有需要，進行修改和完善。\n\n輸出要求：\n\n語言： 繁體中文\n\n字數：500-800字，\n  * **重要**：請勿超過1800字。\n\n結構： 包含前言、重點、結論三個部分\n\n比例： 前言：重點：結論 = 1:7:2\n\n品質： 高品質、清晰易懂、重點突出、邏輯連貫、精確扼要\n\n形式： 以Markdown形式輸出\n\n限制：\n\n1. 摘要的重點應忠實於筆記內容，避免加入個人主觀臆斷或與筆記無關的資訊。\n2. 請避免輸出無關筆記內容文字，如「好的，我已閱讀並理解您提供的筆記內容...」\n\n\n\n範例 (僅供參考，實際產出會根據您提供的筆記內容而定):\n\n假設您的筆記內容是關於「人工智慧發展趨勢」\n\n摘要範例 (部分):\n\n##前言\n本文旨在概述人工智慧 (AI) 發展的最新趨勢。隨著科技的快速進步，AI技術已滲透到各個領域，其發展方向和潛在影響值得深入探討。本摘要將重點分析當前AI發展的幾個關鍵趨勢，並展望其未來發展前景。\n\n##重點 \n\n趨勢一：深度學習持續進化與應用擴展： 深度學習作為當前AI領域的核心技術，其模型結構和演算法仍在不斷進化。例如，Transformer模型的出現極大地提升了自然語言處理和電腦視覺的能力。未來，深度學習將在更多領域得到應用，例如醫療診斷、金融分析、自動駕駛等。\n\n趨勢二：人機協作成為新常態： AI並非要取代人類，而是要與人類協作，共同完成複雜任務。人機協作將成為未來AI應用的一個重要方向。例如，在製造業，AI可以輔助工人進行精細操作，提高生產效率和產品品質。在客服領域，AI聊天機器人可以處理常見問題，將更複雜的問題轉交給人工客服，提升客戶服務體驗。\n\n趨勢三：AI倫理與安全問題日益凸顯： 隨著AI能力的增強，其倫理和安全問題也日益受到關注。例如，演算法歧視、數據隱私洩露、AI武器化等問題都亟待解決。未來，AI發展必須更加重視倫理規範和安全保障，確保AI技術能夠造福人類社會。\n\n趨勢四：跨領域融合創新加速： AI不再是一個獨立的技術領域，而是與其他領域深度融合，產生新的創新應用。例如，AI與生物科技結合，可以加速新藥研發和疾病治療；AI與能源科技結合，可以提高能源效率和開發新型能源；AI與社會科學結合，可以更好地理解人類行為和社會現象。\n\n##結論\n\n綜上所述，人工智慧正處於快速發展和變革的關鍵時期。深度學習的進化、人機協作的興起、倫理安全問題的凸顯以及跨領域融合的加速，共同構成了當前AI發展的主要趨勢。未來，我們需要積極擁抱AI技術，同時也要密切關注其潛在風險，共同塑造一個更加智能、安全和可持續的未來。"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        -400,
+        940
+      ],
+      "id": "96770012-6259-45fd-8269-000283b2959f",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -460,
+        1120
+      ],
+      "id": "9869b60e-eff4-47ff-b30d-76079804aa5d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7F0UQlzlnytDNcUg",
+          "name": "Gemini - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "let allContent = \"\"; // 初始化一個空字串來儲存所有內容\n\nfor (const item of $input.all()) { // 迭代前一個節點傳過來的每一個 item\n  if (item.json && item.json.content) { // 檢查 item.json 和 content 鍵是否存在\n    allContent += item.json.content + \"\\n\"; // 將 content 的值加到 allContent 字串中，並加上換行符號\n  }\n}\n\n// 最後返回一個包含合併後內容的 item\nreturn [{\n  json: {\n    textData: allContent // 將合併後的內容儲存到 textData 鍵中\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -620,
+        940
+      ],
+      "id": "b6f0bde9-2a9c-45e0-9774-28ecf57ac1c7",
+      "name": "讀取Notion筆記文本內容"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nlet rawOutput = $input.first().json.output ; // 從 inputItems 取得 rawOutput\nlet markdownContent = rawOutput.replace(/^```(?:markdown)?\\s*\\n?/i, '').replace(/```\\s*$/, '').trim();\n\nreturn [{ json: { markdown: markdownContent } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        940
+      ],
+      "id": "a8c6338a-5092-4329-8a90-dd09ad7d78bb",
+      "name": "json 解碼器1"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $('page_id清理後最終參數').first().json.page_id }}",
+          "mode": "id"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "heading_1",
+              "textContent": "=重點筆記彙整"
+            },
+            {
+              "textContent": "={{ $json.markdown }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        420,
+        1160
+      ],
+      "id": "a5708363-addd-40e6-b040-988aa0061a3b",
+      "name": "筆記彙整寫入notion",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Step 2: 下載YouTube影片資訊與整理\n\n1. 透過python套件(yt-dlp)下載YouTube影片資訊 \n2. 獲取資訊包含\n- 標題(title)\n- 影片描述內容(description)\n- 章節(chapters)\n- 字幕\n",
+        "height": 480,
+        "width": 1800,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1260,
+        -420
+      ],
+      "id": "3bde02f3-8219-4381-ba5f-c33d0d6ce99e",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "command": "=source /home/node/venv/bin/activate && python /python_script/yt_json_download.py  {{ $('page_id清理後最終參數').item.json.url }}"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -1240,
+        -120
+      ],
+      "id": "a6f71873-b1fd-458a-8863-b6d69ee21304",
+      "name": "YT資訊下載腳本"
+    },
+    {
+      "parameters": {
+        "jsCode": "const jsonString = $node[\"YT資訊下載腳本\"].json[\"stdout\"];\nlet jsonData;\n\ntry {\n  jsonData = JSON.parse(jsonString);\n} catch (error) {\n  console.error(\"Error parsing JSON:\", error);\n  return []; // 或者返回其他預設值，例如 [{}]\n}\n\nreturn [{ json: jsonData }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -860,
+        -240
+      ],
+      "id": "a2e63fa2-f406-4bc9-9324-ab1583d4102e",
+      "name": "(java) 汲取資訊"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -200,
+        -380
+      ],
+      "id": "a5df4766-0d94-4707-b1c2-197f3e719a01",
+      "name": "彙整影片資訊與章節",
+      "alwaysOutputData": false,
+      "notesInFlow": true,
+      "notes": "Merge Node"
+    },
+    {
+      "parameters": {
+        "command": "=source /home/node/venv/bin/activate && python /python_script/vtt_to_json.py"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -160
+      ],
+      "id": "67de7cbf-d921-4774-a841-fe23e962a3c4",
+      "name": "字幕檔清理",
+      "notesInFlow": true,
+      "notes": "vtt_to_json"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6fd36e69-6e2f-4b4d-a3db-2bf4e7f660e4",
+              "name": "subtitle",
+              "value": "={{ $json.stdout }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -380,
+        -160
+      ],
+      "id": "55a6f28f-4d8e-44c0-b919-7cd06a6399c8",
+      "name": "獲取字幕資訊",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Step 3: 筆記機器人(Note Agent Building)\n\n依照逐步輸入的「章節標題」與「章節內容(影片字幕)」進行重點筆記。\n\n- 寫入筆記\n\n",
+        "height": 680,
+        "width": 2580,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2040,
+        100
+      ],
+      "id": "8c521e5a-20fc-4dd9-8a35-3cc0370ddf5f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "\n\n\n## Step 4: 筆記重點彙整，並寫入Notion\n\n\n",
+        "height": 580,
+        "width": 3400,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -2040,
+        820
+      ],
+      "id": "bd04bd40-3fbe-47a1-a948-c14c67fa44c9",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "getAll",
+        "databaseId": {
+          "__rl": true,
+          "value": "1964cecd-cbe5-80d2-9065-f547ab4be420",
+          "mode": "list",
+          "cachedResultName": "Resources Inbox (n8n-watch)",
+          "cachedResultUrl": "https://www.notion.so/1964cecdcbe580d29065f547ab4be420"
+        },
+        "filterType": "manual",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "key": "source_type|select",
+              "condition": "equals",
+              "selectValue": "YouTube"
+            },
+            {
+              "key": "ai_summary|select",
+              "condition": "equals",
+              "selectValue": "Not Yet"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -2180,
+        -120
+      ],
+      "id": "335777af-4490-421f-95fd-dbef9c822ff5",
+      "name": "Notion2",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -2020,
+        -120
+      ],
+      "id": "5157f5bc-f476-4f7b-a0c5-81882c17b4bd",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -2340,
+        -120
+      ],
+      "id": "5c4a74aa-0f38-4665-9999-8256c272cc78",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        -1200,
+        940
+      ],
+      "id": "77f93be5-dc7a-47b8-8419-18bb3c51a30a",
+      "name": "Limit1"
+    },
+    {
+      "parameters": {
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $node['Notion2'].json.url }}",
+          "mode": "url"
+        },
+        "title": "Full Subtitle",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -1860,
+        -120
+      ],
+      "id": "f79e7181-cf0b-4048-8045-ceca6577343f",
+      "name": "建立影片字幕Page",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $node['Notion2'].json.url }}",
+          "mode": "url"
+        },
+        "title": "Full Subtitle",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -1880,
+        -360
+      ],
+      "id": "b20e51b7-ec4b-4dc9-baa8-e660fd6375ae",
+      "name": "建立影片字幕Page1",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "846440c4-77d9-4467-a102-def0d503ef12",
+              "leftValue": "={{ ($json.markdown.length) }}",
+              "rightValue": 2000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        940
+      ],
+      "id": "46f0ef3c-a77a-4334-93e5-46d2a643dccc",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        660,
+        860
+      ],
+      "id": "010f2b03-fd82-4de6-b647-7a9f331f5629",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst MAX_CHUNK_SIZE = 1800; // 設定最大chunk大小為1800\n\nfunction splitTextIntoChunks(text, chunkSize) {\n  const chunks = [];\n  let currentChunk = \"\";\n\n  // 檢查 text 是否為 undefined 或 null\n  if (text === undefined || text === null) {\n    return [{ json: { chunk_id: 1, content: \"\" } }]; // 返回一個包含空字串的陣列，避免後續錯誤\n  }\n\n  // 移除多餘的換行符號，將多個換行合併成一個\n  const cleanedText = text.replace(/\\n{3,}/g, '\\n\\n');\n\n  // 使用正規表達式分割文本，盡量保持段落完整\n  const parts = cleanedText.split(/(\\n\\n|(?<=\\.)\\n)/); // 分割成段落或句子\n\n  for (const part of parts) {\n    if ((currentChunk.length + part.length) <= chunkSize) {\n      // 如果當前chunk加上part的長度不超過限制，則將part添加到當前chunk\n      currentChunk += (currentChunk.length > 0 ? \"\" : \"\") + part;\n    } else {\n      // 如果超過限制，將當前chunk添加到chunks列表，並創建一個新的chunk\n      if (currentChunk.length > 0) {\n        chunks.push(currentChunk);\n      }\n\n      currentChunk = part;\n\n      //如果part本身就超過chunk size\n      while (currentChunk.length > chunkSize) {\n        chunks.push(currentChunk.substring(0, chunkSize));\n        currentChunk = currentChunk.substring(chunkSize);\n      }\n    }\n  }\n\n  // 將最後一個chunk添加到chunks列表\n  if (currentChunk.length > 0) {\n    chunks.push(currentChunk);\n  }\n\n  return chunks;\n}\n\nlet subtitleText = \"\";\nif (items && items[0] && items[0].json && items[0].json.markdown) {\n    subtitleText = items[0].json.markdown;\n}\n\nconst chunks = splitTextIntoChunks(subtitleText, MAX_CHUNK_SIZE);\n\n// 輸出成列表\nconst output = chunks.map((chunk, index) => ({\n  json: {\n    chunk_id: index + 1,\n    content: chunk,\n  },\n}));\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        420,
+        860
+      ],
+      "id": "f5ae6eb7-261e-493d-9874-8f30058505f6",
+      "name": "Splite ChunK Size"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "846440c4-77d9-4467-a102-def0d503ef12",
+              "leftValue": "={{ ($json.subtitle.length) }}",
+              "rightValue": 2000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1360,
+        320
+      ],
+      "id": "bd82e6e4-5f01-457d-86bc-81f98f9b35de",
+      "name": "If2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        880,
+        1100
+      ],
+      "id": "807a94f4-f760-40dc-8ee8-3dfb38214f68",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst MAX_CHUNK_SIZE = 1800; // 設定最大chunk大小為1800\n\nfunction splitTextIntoChunks(text, chunkSize) {\n  const chunks = [];\n  let currentChunk = \"\";\n\n  // 檢查 text 是否為 undefined 或 null\n  if (text === undefined || text === null) {\n    return [{ json: { chunk_id: 1, content: \"\" } }]; // 返回一個包含空字串的陣列，避免後續錯誤\n  }\n\n  // 移除多餘的換行符號，將多個換行合併成一個\n  const cleanedText = text.replace(/\\n{3,}/g, '\\n\\n');\n\n  // 使用正規表達式分割文本，盡量保持段落完整\n  const parts = cleanedText.split(/(\\n\\n|(?<=\\.)\\n)/); // 分割成段落或句子\n\n  for (const part of parts) {\n    if ((currentChunk.length + part.length) <= chunkSize) {\n      // 如果當前chunk加上part的長度不超過限制，則將part添加到當前chunk\n      currentChunk += (currentChunk.length > 0 ? \"\" : \"\") + part;\n    } else {\n      // 如果超過限制，將當前chunk添加到chunks列表，並創建一個新的chunk\n      if (currentChunk.length > 0) {\n        chunks.push(currentChunk);\n      }\n\n      currentChunk = part;\n\n      //如果part本身就超過chunk size\n      while (currentChunk.length > chunkSize) {\n        chunks.push(currentChunk.substring(0, chunkSize));\n        currentChunk = currentChunk.substring(chunkSize);\n      }\n    }\n  }\n\n  // 將最後一個chunk添加到chunks列表\n  if (currentChunk.length > 0) {\n    chunks.push(currentChunk);\n  }\n\n  return chunks;\n}\n\nlet subtitleText = \"\";\nif (items && items[0] && items[0].json && items[0].json.subtitle) {\n    subtitleText = items[0].json.subtitle;\n}\n\nconst chunks = splitTextIntoChunks(subtitleText, MAX_CHUNK_SIZE);\n\n// 輸出成列表\nconst output = chunks.map((chunk, index) => ({\n  json: {\n    chunk_id: index + 1,\n    content: chunk,\n  },\n}));\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1100,
+        160
+      ],
+      "id": "387042dd-39bd-4976-a38d-8449a094ca37",
+      "name": "Splite ChunK Size2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -900,
+        160
+      ],
+      "id": "9b308814-5d46-411d-a3d7-d26c06a630d7",
+      "name": "Loop Over Items3"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $node['page_id清理後最終參數'].json.subtitle_page_url }}",
+          "mode": "url"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "textContent": "={{ $json.content }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -640,
+        160
+      ],
+      "id": "caa0b38f-ba2b-45dc-9318-bb2d23ca53fe",
+      "name": "add subtitle",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e13d4e04-4f45-47c3-a730-9820f791c6ab",
+              "name": "url",
+              "value": "={{ $('Limit').item.json.property_url }}",
+              "type": "string"
+            },
+            {
+              "id": "9a5ee5a7-5a5d-477c-b0c0-91875126a23a",
+              "name": "page_id",
+              "value": "={{ $('Limit').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "cd432bc8-b7df-40fe-bcb8-48237f5a6a60",
+              "name": "subtitle_page_url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1680,
+        -360
+      ],
+      "id": "2cdb1cdd-886c-451d-8e03-18cdc7d92617",
+      "name": "連結、pageid、標題參數2"
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "={{ $node['page_id清理後最終參數'].json.subtitle_page_url }}",
+          "mode": "url"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "textContent": "={{ $json.subtitle }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -1100,
+        380
+      ],
+      "id": "bf485cd2-b7ed-47cf-8e75-6ef699bffefa",
+      "name": "Add subtitle",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "1bf4cecdcbe580ebaf4ac0db0c54172c",
+          "mode": "id"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "textContent": "={{ $json.content }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1020,
+        900
+      ],
+      "id": "93f0e9d8-ea32-4eb6-9a47-7263ab0ab343",
+      "name": "Add conclusion",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('page_id清理後最終參數').first().json.page_id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "ai_summary|select",
+              "selectValue": "Done"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        1220,
+        1160
+      ],
+      "id": "e11cfacb-1775-4dee-827b-aaa3bf2ba037",
+      "name": "Update Status to done",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7605b3fc-1a76-4a4c-9cb1-388b5a696fc0",
+              "leftValue": "={{ $json.stdout }}",
+              "rightValue": "{}",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1060,
+        -120
+      ],
+      "id": "e423c91d-7c21-49d7-b32c-a3e0b7261371",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "operation": "update",
+        "pageId": {
+          "__rl": true,
+          "value": "={{ $('page_id清理後最終參數').item.json.page_id }}",
+          "mode": "id"
+        },
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "ai_summary|select",
+              "selectValue": "Can't get subtitle"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -860,
+        -60
+      ],
+      "id": "f0887b94-79cc-4034-927a-f690261d91f8",
+      "name": "Notion1",
+      "credentials": {
+        "notionApi": {
+          "id": "KsM1pWosfL8xxTyo",
+          "name": "Notion account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "整併字幕至各章節": {
+      "main": [
+        [
+          {
+            "node": "拆分出各章節",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "json 解碼器": {
+      "main": [
+        [
+          {
+            "node": "撰寫章節名稱",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "YouTube Chapter Note Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "撰寫各章節重點",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YouTube Chapter Note Agent": {
+      "main": [
+        [
+          {
+            "node": "json 解碼器",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Limit1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "YouTube Chapter Note Agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "撰寫章節名稱": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "拆分出各章節": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "撰寫各章節重點": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "建立影片字幕Page1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "連結、pageid、標題參數": {
+      "main": [
+        [
+          {
+            "node": "page_id清理後最終參數",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "page_id清理後最終參數": {
+      "main": [
+        [
+          {
+            "node": "YT資訊下載腳本",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion": {
+      "main": [
+        [
+          {
+            "node": "讀取Notion筆記文本內容",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "讀取Notion筆記文本內容": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "json 解碼器1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "json 解碼器1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "YT資訊下載腳本": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "(java) 汲取資訊": {
+      "main": [
+        [
+          {
+            "node": "字幕檔清理",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "彙整影片資訊與章節",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "彙整影片資訊與章節": {
+      "main": [
+        [
+          {
+            "node": "整併字幕至各章節",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "字幕檔清理": {
+      "main": [
+        [
+          {
+            "node": "獲取字幕資訊",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "獲取字幕資訊": {
+      "main": [
+        [
+          {
+            "node": "彙整影片資訊與章節",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        []
+      ]
+    },
+    "筆記彙整寫入notion": {
+      "main": [
+        [
+          {
+            "node": "Update Status to done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notion2": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "建立影片字幕Page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Notion2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit1": {
+      "main": [
+        [
+          {
+            "node": "Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "建立影片字幕Page": {
+      "main": [
+        [
+          {
+            "node": "連結、pageid、標題參數",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "建立影片字幕Page1": {
+      "main": [
+        [
+          {
+            "node": "連結、pageid、標題參數2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Splite ChunK Size",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "筆記彙整寫入notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add conclusion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Splite ChunK Size": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Update Status to done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Splite ChunK Size2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add subtitle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Splite ChunK Size2": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items3": {
+      "main": [
+        [],
+        [
+          {
+            "node": "add subtitle",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "add subtitle": {
+      "main": [
+        [
+          {
+            "node": "Splite ChunK Size2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "連結、pageid、標題參數2": {
+      "main": [
+        [
+          {
+            "node": "page_id清理後最終參數",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add conclusion": {
+      "main": [
+        [
+          {
+            "node": "Splite ChunK Size",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "(java) 汲取資訊",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notion1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "883d80c6-551f-4fe3-a38f-4e5726d6d56b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
+  },
+  "id": "VZB9dK39s91AdU4H",
+  "tags": []
+}
