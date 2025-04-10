@@ -11,8 +11,8 @@
       "type": "n8n-nodes-base.stickyNote",
       "typeVersion": 1,
       "position": [
-        -2340,
-        -600
+        -2400,
+        -640
       ],
       "id": "09df0eb5-70b8-4bd4-8272-1ccedf1b9a00",
       "name": "Sticky Note"
@@ -87,8 +87,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.7,
       "position": [
-        -1060,
-        520
+        -1040,
+        540
       ],
       "id": "ad2ca85e-b54a-4d52-b749-5a3c70f89839",
       "name": "YouTube Chapter Note Agent",
@@ -105,7 +105,7 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -1560,
+        -1620,
         520
       ],
       "id": "e7f22075-7b6c-4560-bd71-e3ccf44158e7",
@@ -209,8 +209,8 @@
       "type": "n8n-nodes-base.notionTrigger",
       "typeVersion": 1,
       "position": [
-        -2340,
-        -360
+        -2380,
+        -400
       ],
       "id": "a1a9df53-2afa-4e5f-9230-99585980a3ad",
       "name": "Notion Trigger",
@@ -219,8 +219,7 @@
           "id": "KsM1pWosfL8xxTyo",
           "name": "Notion account"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
@@ -250,8 +249,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -2120,
-        -360
+        -2160,
+        -400
       ],
       "id": "d957d1f1-334f-4876-ab82-c2b3ded437d3",
       "name": "If"
@@ -604,7 +603,7 @@
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        -2180,
+        -2240,
         -120
       ],
       "id": "335777af-4490-421f-95fd-dbef9c822ff5",
@@ -621,7 +620,7 @@
       "type": "n8n-nodes-base.limit",
       "typeVersion": 1,
       "position": [
-        -2020,
+        -2080,
         -120
       ],
       "id": "5157f5bc-f476-4f7b-a0c5-81882c17b4bd",
@@ -641,7 +640,7 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
-        -2340,
+        -2400,
         -120
       ],
       "id": "5c4a74aa-0f38-4665-9999-8256c272cc78",
@@ -662,7 +661,7 @@
       "parameters": {
         "pageId": {
           "__rl": true,
-          "value": "={{ $node['Notion2'].json.url }}",
+          "value": "={{ $json.url }}",
           "mode": "url"
         },
         "title": "Full Subtitle",
@@ -671,7 +670,7 @@
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        -1860,
+        -1900,
         -120
       ],
       "id": "f79e7181-cf0b-4048-8045-ceca6577343f",
@@ -687,8 +686,8 @@
       "parameters": {
         "pageId": {
           "__rl": true,
-          "value": "={{ $node['Notion2'].json.url }}",
-          "mode": "url"
+          "value": "={{ $json.id }}",
+          "mode": "id"
         },
         "title": "Full Subtitle",
         "options": {}
@@ -696,8 +695,8 @@
       "type": "n8n-nodes-base.notion",
       "typeVersion": 2.2,
       "position": [
-        -1880,
-        -360
+        -1920,
+        -400
       ],
       "id": "b20e51b7-ec4b-4dc9-baa8-e660fd6375ae",
       "name": "建立影片字幕Page1",
@@ -818,8 +817,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1100,
-        160
+        -1120,
+        140
       ],
       "id": "387042dd-39bd-4976-a38d-8449a094ca37",
       "name": "Splite ChunK Size2"
@@ -832,7 +831,7 @@
       "typeVersion": 3,
       "position": [
         -900,
-        160
+        140
       ],
       "id": "9b308814-5d46-411d-a3d7-d26c06a630d7",
       "name": "Loop Over Items3"
@@ -857,7 +856,7 @@
       "typeVersion": 2.2,
       "position": [
         -640,
-        160
+        140
       ],
       "id": "caa0b38f-ba2b-45dc-9318-bb2d23ca53fe",
       "name": "add subtitle",
@@ -867,41 +866,6 @@
           "name": "Notion account"
         }
       }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "e13d4e04-4f45-47c3-a730-9820f791c6ab",
-              "name": "url",
-              "value": "={{ $('Limit').item.json.property_url }}",
-              "type": "string"
-            },
-            {
-              "id": "9a5ee5a7-5a5d-477c-b0c0-91875126a23a",
-              "name": "page_id",
-              "value": "={{ $('Limit').item.json.id }}",
-              "type": "string"
-            },
-            {
-              "id": "cd432bc8-b7df-40fe-bcb8-48237f5a6a60",
-              "name": "subtitle_page_url",
-              "value": "={{ $json.url }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        -1680,
-        -360
-      ],
-      "id": "2cdb1cdd-886c-451d-8e03-18cdc7d92617",
-      "name": "連結、pageid、標題參數2"
     },
     {
       "parameters": {
@@ -923,7 +887,7 @@
       "typeVersion": 2.2,
       "position": [
         -1100,
-        380
+        360
       ],
       "id": "bf485cd2-b7ed-47cf-8e75-6ef699bffefa",
       "name": "Add subtitle",
@@ -1038,7 +1002,7 @@
         "operation": "update",
         "pageId": {
           "__rl": true,
-          "value": "={{ $('page_id清理後最終參數').item.json.page_id }}",
+          "value": "={{ $node['page_id清理後最終參數'].json.page_id }}",
           "mode": "id"
         },
         "propertiesUi": {
@@ -1065,6 +1029,41 @@
           "name": "Notion account"
         }
       }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e13d4e04-4f45-47c3-a730-9820f791c6ab",
+              "name": "url",
+              "value": "={{ $('Notion Trigger').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "9a5ee5a7-5a5d-477c-b0c0-91875126a23a",
+              "name": "page_id",
+              "value": "={{ $('Notion Trigger').item.json.id }}",
+              "type": "string"
+            },
+            {
+              "id": "cd432bc8-b7df-40fe-bcb8-48237f5a6a60",
+              "name": "subtitle_page_url",
+              "value": "={{ $json.url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1720,
+        -400
+      ],
+      "id": "34bbbb2e-92e4-4385-9d2d-05c0948d484f",
+      "name": "連結、pageid、標題參數1"
     }
   ],
   "pinData": {},
@@ -1422,7 +1421,7 @@
       "main": [
         [
           {
-            "node": "連結、pageid、標題參數2",
+            "node": "連結、pageid、標題參數1",
             "type": "main",
             "index": 0
           }
@@ -1539,17 +1538,6 @@
         ]
       ]
     },
-    "連結、pageid、標題參數2": {
-      "main": [
-        [
-          {
-            "node": "page_id清理後最終參數",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Add conclusion": {
       "main": [
         [
@@ -1578,13 +1566,24 @@
           }
         ]
       ]
+    },
+    "連結、pageid、標題參數1": {
+      "main": [
+        [
+          {
+            "node": "page_id清理後最終參數",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "883d80c6-551f-4fe3-a38f-4e5726d6d56b",
+  "versionId": "fde5d80a-1a4c-4474-a1a8-578e9cb03077",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
