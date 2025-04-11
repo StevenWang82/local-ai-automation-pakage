@@ -1,4 +1,4 @@
-# YouTube 學習筆記自動化 n8n 工作流程
+# n8n 自動化工作流 : YouTube-AI-Summary-to-Notion-Agent
 
 此 n8n 工作流程旨在自動化從 YouTube 影片創建學習筆記並存儲到 Notion 的過程。它會提取影片資訊、字幕，並利用 AI 模型生成章節重點和整體摘要。
 
