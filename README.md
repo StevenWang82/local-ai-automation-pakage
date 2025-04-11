@@ -1,15 +1,15 @@
-# Self-hosted AI starter kit
+# Local AI Automation Package
 
-**Self-hosted AI Starter Kit** 是一個開放的 Docker Compose 模板，可以快速啟動一個功能齊全的本地 AI 和低代碼開發環境，其中包括 Open WebUI，作為與您的 N8N 代理互動的介面。
+local AI Automation Package 是一個開放的 Docker Compose 模板，可以快速啟動一個功能齊全的本地 AI 和低代碼開發環境，其中包括 Open WebUI、qdrant、n8n、Ollama 和 PostgreSQL。
 
-以下是我參考Cole's version的版本，做的修正。
-Cole's version 新增 Open WebUI、Flowwise！
-我將FreshRSS加入，主要用於資料匯入。
+此docker compose內容，主要folk from coleam00 version，
+並加入FreshRSS，作為接收外部訊息來源。
 
 [原始 Local AI Starter Kit](https://github.com/n8n-io/self-hosted-ai-starter-kit)
+
 [Cole's version](https://github.com/coleam00/ai-agents-masterclass/tree/main/local-ai-packaged)
 
-建議可以參考Cole's 的安裝教學影片！講得非常詳細。
+建議可以參考Cole's 的[安裝教學影片](https://www.youtube.com/watch?v=V_0dNE-H2gw)，不過如果你也需要FreshRSS，就使用這邊的FreshRSS。
 
 ![n8n.io - 螢幕截圖](https://raw.githubusercontent.com/n8n-io/self-hosted-ai-starter-kit/main/assets/n8n-demo.gif)
 
@@ -22,7 +22,7 @@ Cole's version 新增 Open WebUI、Flowwise！
 
 ✅ [**Open WebUI**](https://openwebui.com/) - 類似 ChatGPT 的介面，可與您的本地模型和 N8N 代理私下互動
 
-✅ [**Flowise**](https://flowiseai.com/) - 無/低代碼 AI 代理構建器，與 n8n 非常搭配
+✅ [**Flowise**](https://flowiseai.com/) - 無/低代碼 AI 代理構建器，與 n8n 非常搭配。
 
 ✅ [**Qdrant**](https://qdrant.tech/) - 具有全面 API 的開源，非常實用的向量儲存軟體。
 
@@ -32,7 +32,10 @@ Cole's version 新增 Open WebUI、Flowwise！
 
 ## 安裝
 
-雖然這邊是使用docker指令裝，但也非常建議各位下載[docker desktop](https://www.docker.com/products/docker-desktop/)
+雖然這邊是使用docker指令裝，但對於新手而言，非常建議各位下載[docker desktop](https://www.docker.com/products/docker-desktop/)，將docker服務呈現於桌面，比較易懂。
+
+> 貼心提宿：如果「顯卡」不夠強的話，建議可以直接不裝Ollama，否則會跑到天荒底老，使用者體驗大幅降低。
+
 ### 適用於 Nvidia GPU 用戶
 
 ```
