@@ -9,12 +9,14 @@
 本工作流程主要分為以下幾個步驟：
 
 1.  **觸發與參數設定 (Step 1):**
-    *   可透過 **排程觸發 (Schedule Trigger)** 每 10 分鐘自動檢查 Notion 指定資料庫，或手動觸發 (原 Notion Trigger 已停用)。
+    *   可透過 **排程觸發 (Schedule Trigger)** 每 10 分鐘自動檢查 Notion 指定資料庫，或手動觸發。
     *   尋找 Notion 資料庫中 `source_type` 為 "YouTube" 且 `ai_summary` 狀態為 "Not Yet" 的頁面。
     *   限制每次處理一個項目 (Limit 節點)。
     *   從 Notion 頁面提取 YouTube 影片的 `url` 和 Notion 頁面的 `page_id`。
     *   建立一個新的 Notion 子頁面，用於存放完整的影片字幕。
     *   清理 `page_id` 中的連字號 (`-`)。
+
+    👉[notion database 模板資源](https://www.notion.so/chenglungwang/Database-Template-for-sharing-for-n8n-workflow-1d24cecdcbe580a59172ddc080662ac0)
 
 2.  **下載 YouTube 影片資訊與整理 (Step 2):**
     *   執行 `yt_json_download.py` Python 腳本，傳入 YouTube `url`。
@@ -29,7 +31,7 @@
 3.  **筆記機器人 - 章節重點生成 (Step 3):**
     *   將包含字幕的章節資料拆分成多個項目，每個項目代表一個章節。
     *   **迴圈處理每個章節 (Loop Over Items):**
-        *   檢查字幕內容長度，如果超過 2000 字元，則進行分塊處理 (Splite ChunK Size2) 再寫入先前建立的字幕子頁面；否則直接寫入。
+        *   檢查字幕內容長度，如果超過 2000 字元，則進行分塊處理 (Splite ChunK Size2) 再寫入先前建立的字幕子頁面；否則直接寫入。 (因為notion block有字數限制)
         *   使用 **Google Gemini AI Agent (YouTube Chapter Note Agent)**：
             *   輸入：章節標題和該章節的字幕內容。
             *   任務：扮演「章節重點摘要專家」，提取核心概念，以條列式生成重點筆記 (keynotes)，並自然融入學理關鍵字 (首次出現時加註英文)。
@@ -58,7 +60,7 @@
 *   **n8n 環境:** : 適合自架n8n環境者。
 *   **Python 環境:** n8n 的執行環境需要能夠執行 Python 腳本，並安裝必要的 Python 套件。
     *   `yt-dlp`: 用於下載 YouTube 資訊和字幕。
-    *   `ffmpeg`: `yt-dlp` 可能需要 `ffmpeg` 來處理某些影音格式或合併下載。
+    *   `ffmpeg`: `yt-dlp` 可能需要 `ffmpeg` 來處理某些影音格式或合併下載，但我們指獲取影片meta資訊以及字幕，不設涉及影音內容處理，若未安裝也沒關係。
 *   **Docker 環境首次設定 (若適用):** 如果您在 Docker 容器中運行 n8n，首次設定容器時，需要在容器內執行以下指令來安裝 Python、pip、ffmpeg 並設定虛擬環境：
     *(如果您未使用 Docker，請確保您的 n8n 環境已安裝 Python 3, pip, ffmpeg，並可安裝 yt-dlp。)*
     ```bash
