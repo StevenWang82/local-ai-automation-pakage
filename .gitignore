@@ -1,3 +1,5 @@
 .env
 /Obsidian/
 /backup/daily_backup/
+/venv
+docker-compose.yml
