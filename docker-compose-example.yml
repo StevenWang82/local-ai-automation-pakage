@@ -25,7 +25,8 @@ x-n8n: &service-n8n
     - N8N_ENCRYPTION_KEY # 敏感資料加密資訊
     - N8N_USER_MANAGEMENT_JWT_SECRET
     - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true # 防止容器重啟後丟失配置
-    - N8N_RUNNERS_ENABLED=true # 启用 Runner
+    - N8N_RUNNERS_ENABLED=true # 啟用 Runner
+    - N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE=true # 用於community mcp server node
 
 x-ollama: &service-ollama
   image: ollama/ollama:latest
