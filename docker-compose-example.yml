@@ -203,3 +203,14 @@ services:
   #   <<: *init-ollama
   #   depends_on:
   #     - ollama-gpu
+
+  markitdown-mcp:
+    image: markitdown-mcp:latest
+    container_name: markitdown-mcp
+    networks: ['my-internal-network']
+    restart: unless-stopped
+    ports:
+      - "3001:3000" # Assuming the container listens on port 3000 internally, mapping to host 3001
+    volumes:
+      - ./shared:/workdir
+    command: ["--sse", "--host", "0.0.0.0", "--port", "3000"]
