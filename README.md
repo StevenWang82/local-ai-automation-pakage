@@ -2,8 +2,10 @@
 
 local AI Automation Package 是一個開放的 Docker Compose 模板，可以快速啟動一個功能齊全的本地 AI 和低代碼開發環境，其中包括 Open WebUI、qdrant、n8n、Ollama 和 PostgreSQL。
 
-此docker compose內容，主要folk from coleam00 version，
-並加入FreshRSS，作為接收外部訊息來源。
+此docker compose內容，主要folk from coleam00 version。
+並將持續新增實用項目，包含：
+1. FreshRSS，作為接收外部訊息來源。
+2. Markitdown MCP severvice，作為將資源轉換為 Markdown 格式的服務，通過 n8n 工作流程與 AI Agent 集成，提供強大的內容處理能力。
 
 [原始 Local AI Starter Kit](https://github.com/n8n-io/self-hosted-ai-starter-kit)
 
@@ -30,11 +32,17 @@ local AI Automation Package 是一個開放的 Docker Compose 模板，可以快
 
 ✅ [**FreshRSS**](https://freshrss.org/index.html) -  免費、開源的 RSS 聚合器，蒐集各式具RSS網站內容。
 
+## 2025.04.23 更新:新增 Markitdown MCP 服務
+
+✅ [**Markitdown MCP**](https://github.com/markitdown/markitdown-mcp) - 一個用於將資源轉換為 Markdown 格式的服務，通過 n8n 工作流程與 AI Agent 集成，提供強大的內容處理能力。Markitdown MCP 服務通過 SSE (Server-Sent Events) 端點與 n8n 進行通信，允許 AI Agent 使用其工具來處理內容轉換任務。
+
+
 ## 安裝
 
 雖然這邊是使用docker指令裝，但對於新手而言，非常建議各位下載[docker desktop](https://www.docker.com/products/docker-desktop/)，將docker服務呈現於桌面，比較易懂。
 
 > 貼心提宿：如果「顯卡」不夠強的話，建議可以直接不裝Ollama，否則會跑到天荒底老，使用者體驗大幅降低。
+
 
 ### 適用於 Nvidia GPU 用戶
 
