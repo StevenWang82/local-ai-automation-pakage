@@ -1,0 +1,168 @@
+{
+  "name": "webhook-Markitdown-mcp-agent",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=請使用Markitdown MCP解析以下網址所有內容，並以markitdown語法回傳\n{{ $json.body.README_url }}",
+        "options": {
+          "systemMessage": "You are a helpful assistant",
+          "passthroughBinaryImages": true
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -420,
+        -380
+      ],
+      "id": "32422355-9e49-46f9-854d-eeaf1d1e9ee0",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-preview-04-17",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -180
+      ],
+      "id": "4ac8dfb6-1be3-44f5-bccc-0d7aad112e08",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "qO5NASFECwvuJ7Li",
+          "name": "Gemini - CoL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "markitdown-mcp-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -680,
+        -380
+      ],
+      "id": "cb60db23-4387-4477-ae3d-12222caad708",
+      "name": "Webhook",
+      "webhookId": "30bfb8aa-0bbf-48ba-91a1-1283ca6dfba2"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        160,
+        -380
+      ],
+      "id": "8cabecaa-9fb6-42c2-bba1-935cf6a9ca75",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "http://markitdown-mcp:3000/sse"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -160
+      ],
+      "id": "4c612d26-fbfb-484d-a586-b9b38b77f688",
+      "name": "Markitdown MCP"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 這個函數用於清理從AI Agent得到的markdown輸出\nfunction cleanupMarkdown(items) {\n  // 針對每個輸入項目進行處理\n  return items.map(item => {\n    let output = item.json.output || '';\n    \n    // 去除起始和結尾的markdown標記和換行符\n    output = output.replace(/^['\"]?```markdown\\s*\\n?/i, '');\n    output = output.replace(/\\n?```['\"]?$/i, '');\n    \n    // 去除多餘的跳脫字元(\\n)\n    output = output.replace(/\\\\n/g, '\\n');\n    \n    // 去除可能的JSON字符串引號\n    if (output.startsWith('\"') && output.endsWith('\"')) {\n      output = output.slice(1, -1);\n    }\n\n    // 返回清理後的markdown\n    return {\n      ...item.json,\n      output: output\n    };\n  });\n}\n\n// 使用function處理items並返回結果\nreturn cleanupMarkdown($input.all());"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -40,
+        -380
+      ],
+      "id": "59fca316-c7c4-4de7-941a-193fb1cbcf1c",
+      "name": "Markdown Parser"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown Parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markitdown MCP": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown Parser": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "dd20335a-821f-4c41-9fdd-659d8b232566",
+  "meta": {
+    "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
+  },
+  "id": "BfHghQgQQ6xEkqyh",
+  "tags": []
+}
