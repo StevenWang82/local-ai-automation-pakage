@@ -1,0 +1,3872 @@
+{
+  "name": "Information_collecit_and_summary_agent",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1_31aY67d_dDU2AwV6hlJ95NgnbTsYHboKRTL2uBRyOk",
+          "mode": "list",
+          "cachedResultName": "0_Web Search / RSS / subscription",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_31aY67d_dDU2AwV6hlJ95NgnbTsYHboKRTL2uBRyOk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 242721978,
+          "mode": "list",
+          "cachedResultName": "Web Search Keywords",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1_31aY67d_dDU2AwV6hlJ95NgnbTsYHboKRTL2uBRyOk/edit#gid=242721978"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        540,
+        -440
+      ],
+      "id": "9c21acc0-13e9-4ddd-b53a-2ea8bbd7decf",
+      "name": "Get Search Kewrods",
+      "retryOnFail": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "192ef91e-1f91-40a1-9bf2-8396705f02a6",
+              "name": "last_cheked_time",
+              "value": "={{ new Date($('Extract from File').item.json.data[0].lastCheckTime).toISOString().split('.')[0] + 'Z'  }}",
+              "type": "string"
+            },
+            {
+              "id": "5227136d-5602-4c1e-95a8-87951ec43933",
+              "name": "Keywords",
+              "value": "={{ $json.Keywords }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        780,
+        -440
+      ],
+      "id": "81425f5b-4275-42d6-a2c7-8c77f5b3160d",
+      "name": "Set Check Time"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1028865261,
+          "mode": "list",
+          "cachedResultName": "web-search_temp_news",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=1028865261"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url": "={{ $json.url }}",
+            "checked": "2-Categorized",
+            "importance": "={{ $json.importance }}",
+            "relevance_score": "={{ $json.relevance_score }}",
+            "category": "={{ $json.category }}"
+          },
+          "matchingColumns": [
+            "url"
+          ],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub_Date",
+              "displayName": "pub_Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "checked",
+              "displayName": "checked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relevance_score",
+              "displayName": "relevance_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3340,
+        -840
+      ],
+      "id": "7fbcc1b2-7de7-4b5e-be36-beae1f7da373",
+      "name": "Add to web-search-temp_news",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "ignoreAttrs": true,
+          "normalize": true,
+          "trim": true
+        }
+      },
+      "type": "n8n-nodes-base.xml",
+      "typeVersion": 1,
+      "position": [
+        1120,
+        -2780
+      ],
+      "id": "2dc627f9-008f-42b8-b646-055f3effdbf4",
+      "name": "XML1"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "rss.channel.item",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        -2780
+      ],
+      "id": "77c2e816-f1e5-4ab5-9ed7-4f227c36346e",
+      "name": "Split Out2"
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.description }}",
+        "destinationKey": "description",
+        "options": {
+          "ignore": ""
+        }
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        2160,
+        -2780
+      ],
+      "id": "a44530de-da46-4c3f-965a-fb042aed46b0",
+      "name": "Markdown1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/tmp/lastCheckFile",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1620,
+        -3000
+      ],
+      "id": "61222d6e-0359-4a50-a428-d8195d482fce",
+      "name": "Read/Write Files from Disk3"
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        -3000
+      ],
+      "id": "9fbfcf70-7de0-4b6e-856d-68d57ba5a30d",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1220,
+        -520
+      ],
+      "id": "73ef0531-b5de-478c-bb8e-cf83ab3227b4",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "https://gnews.io/api/v4/search?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.Keywords }}"
+            },
+            {
+              "name": "in",
+              "value": "title, description, content"
+            },
+            {
+              "name": "from",
+              "value": "={{ $json.last_cheked_time }}"
+            },
+            {
+              "name": "country",
+              "value": "us"
+            },
+            {
+              "name": "max",
+              "value": "20"
+            },
+            {
+              "name": "apikey",
+              "value": "0d9436220337a93b379be8937bdb63db"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        -520
+      ],
+      "id": "a46bf4e5-58b8-4c7e-84c5-027d9c6188a1",
+      "name": "GNews API2",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1820,
+        -460
+      ],
+      "id": "4bdf4520-4951-466a-8f44-2a0792995deb",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "articles",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        2060,
+        -460
+      ],
+      "id": "60a04c0e-590f-4e84-b1ef-33c235d857e4",
+      "name": "Split Out3",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "content": "## Source 1: keyword-based news (Google News)\n- categorize news articles\n- summerize articles",
+        "height": 120,
+        "width": 560
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -420,
+        -3180
+      ],
+      "id": "d6446e87-e1c5-4af2-b9d6-9c91332e2293",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1028865261,
+          "mode": "list",
+          "cachedResultName": "web-search_temp_news",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=1028865261"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "description": "={{ $json.description }}",
+            "content": "={{ $json.content }}",
+            "pub_Date": "={{ $json.publishedAt }}",
+            "url": "={{ $json.url }}",
+            "checked": "No",
+            "title": "={{ $json.title }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub_Date",
+              "displayName": "pub_Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "checked",
+              "displayName": "checked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relevance_score",
+              "displayName": "relevance_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2820,
+        -400
+      ],
+      "id": "f1fb9e8b-6df0-43bb-9674-c9c596c7dc5f",
+      "name": "web-search_temp_input1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        -700
+      ],
+      "id": "79eebdd6-8581-47c9-b5e4-3093cba32d7b",
+      "name": "Limit2"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// 取得 AI Agent的輸出\nconst rawInput = $input.first().json;\n\n// 提取 \"output\" 欄位中的字串\nlet jsonString = rawInput.output;\n\n// 檢查是否有 output 欄位\nif (!jsonString) {\n  throw new Error(\"json parser1 輸出中無法找到 'output' 欄位，請確認前一個節點的輸出結構\");\n}\n\n// 移除開頭的 ```json 和結尾的 ```，並清理多餘的換行與空格\njsonString = jsonString\n  .replace(/```json\\n?/, '')  // 移除開頭的 ```json 和可能的換行\n  .replace(/\\n?```/, '')      // 移除結尾的 ```\n  .replace(/\\n\\s*/g, '');     // 移除所有的換行與後續空格\n\n// 將清理後的字串解析為 JSON 物件\nconst parsedJson = JSON.parse(jsonString);\n\n// 回傳結構化的 JSON 格式，符合 n8n 的輸出規範\nreturn [{ json: parsedJson }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2960,
+        -840
+      ],
+      "id": "454207f4-770b-432b-8d07-75ae8c9d5da1",
+      "name": "json parser2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2180,
+        -840
+      ],
+      "id": "f5212537-7dde-4583-9fc6-1aef7415d9af",
+      "name": "Loop Over Items5"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1b989163-ec7d-451b-ae46-481219597cd7",
+              "name": "url",
+              "value": "={{ $('Loop Over Items5').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "eb90f6f0-9ca3-43b8-82d6-20a2f119e349",
+              "name": "category",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "639bafaf-fb7d-4e1b-aed1-96c8641e7a1b",
+              "name": "relevance_score",
+              "value": "={{ $json.relevance_score }}",
+              "type": "number"
+            },
+            {
+              "id": "cb0e0104-da17-4656-81da-0ff8a04050f1",
+              "name": "importance",
+              "value": "={{ $json.importance }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3140,
+        -840
+      ],
+      "id": "a4d1a46b-1b52-4fa0-ab88-abbd771b73d5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "https://gnews.io/api/v4/search?",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "={{ $json.Keywords }}"
+            },
+            {
+              "name": "in",
+              "value": "title, description, content"
+            },
+            {
+              "name": "from",
+              "value": "={{ $json.last_cheked_time }}"
+            },
+            {
+              "name": "country",
+              "value": "tw"
+            },
+            {
+              "name": "max",
+              "value": "20"
+            },
+            {
+              "name": "apikey",
+              "value": "0d9436220337a93b379be8937bdb63db"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        -360
+      ],
+      "id": "fe177b3e-5dd2-4d70-bbdd-e1404ccf5cc6",
+      "name": "GNews API3",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dc707510-d3ce-4b93-acd5-604fc7051e73",
+              "leftValue": "={{ $json }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2540,
+        -460
+      ],
+      "id": "9eea236f-0738-4bb4-b489-ed6ca3c87b19",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2280,
+        -460
+      ],
+      "id": "d75320e4-fb35-44da-a6a1-b521fbe4b9ab",
+      "name": "Wait2",
+      "webhookId": "2759a8a6-9566-4fe2-ad58-275f1aa22672"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        -1040
+      ],
+      "id": "ed7c8aa0-6688-4940-a975-c94f89113eea",
+      "name": "Limit3"
+    },
+    {
+      "parameters": {
+        "content": "## Step 1 : Get relavent news via GNEWS API and add to temporary database\n- News API provides the following information\n- **title/description/short-version content**, but not whole content",
+        "width": 620,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        500,
+        -980
+      ],
+      "id": "0a04d7e8-bd83-4a1d-8c79-4e3c21bb5900",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Step 2 : News categorization\n- Classify news **topic** and calculate its **relavence** and **importance**, based on title/description/short-version content, \n- topic, relavence, importance",
+        "height": 140,
+        "width": 620,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        -1340
+      ],
+      "id": "258f3542-1dee-44a5-8e67-dcb5bb0ae1bb",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "url": "=https://r.jina.ai/ {{ $json.url }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3980,
+        -1320
+      ],
+      "id": "2aec1f9a-6261-4cfe-a536-803d1737336f",
+      "name": "HTTP - jina (get markdown)1",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f360544b-8ac4-4eef-ad19-b58ead240563",
+              "leftValue": "={{ $json.importance }}",
+              "rightValue": 6,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        3440,
+        -1320
+      ],
+      "id": "cad89ce7-4caf-4f24-8713-c6baaaa81da1",
+      "name": "Filter3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 這個函數用於清理從AI Agent得到的markdown輸出\nfunction cleanupMarkdown(items) {\n  // 針對每個輸入項目進行處理\n  return items.map(item => {\n    let output = item.json.output || '';\n    \n    // 去除起始和結尾的markdown標記和換行符\n    output = output.replace(/^['\"]?```markdown\\s*\\n?/i, '');\n    output = output.replace(/\\n?```['\"]?$/i, '');\n    \n    // 去除多餘的跳脫字元(\\n)\n    output = output.replace(/\\\\n/g, '\\n');\n    \n    // 去除可能的JSON字符串引號\n    if (output.startsWith('\"') && output.endsWith('\"')) {\n      output = output.slice(1, -1);\n    }\n\n    // 返回清理後的markdown\n    return {\n      ...item.json,\n      output: output\n    };\n  });\n}\n\n// 使用function處理items並返回結果\nreturn cleanupMarkdown($input.all());"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4600,
+        -1320
+      ],
+      "id": "b7aa0d75-c3ce-4798-b09b-7d94c113dd2b",
+      "name": "Markdown Parser"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b23813a1-5692-43cd-aa2d-0efe890d5c5d",
+              "name": "reference_rss_id",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "12e8d2c1-9145-491b-aebb-eba5d41dca85",
+              "name": "title",
+              "value": "={{ $('Loop Over Items6').item.json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "0306f0fa-202b-48cd-ac4f-64d3681b588e",
+              "name": "topic",
+              "value": "={{ $('Loop Over Items6').item.json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "05551b54-dbe1-4c63-9a74-9e0a29c54442",
+              "name": "pubDate",
+              "value": "={{ $('Loop Over Items6').item.json.pub_Date }}",
+              "type": "string"
+            },
+            {
+              "id": "149b24cd-23c6-47e0-8b7c-c10d61a3b122",
+              "name": "summary",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "c6877d89-de05-4e95-9d72-b18bd407c6d3",
+              "name": "url",
+              "value": "={{ $('Loop Over Items6').item.json.url }}",
+              "type": "string"
+            },
+            {
+              "id": "d8ab773f-b80f-428a-a28f-f9b99e150ed4",
+              "name": "relevance_score",
+              "value": "={{ $('Loop Over Items6').item.json.relevance_score }}",
+              "type": "number"
+            },
+            {
+              "id": "30c83185-daab-4114-886c-cadca2a60acf",
+              "name": "relevance_score",
+              "value": "={{ $('Loop Over Items6').item.json.relevance_score }}",
+              "type": "number"
+            },
+            {
+              "id": "2cd95bb1-d02b-45fd-8cc2-fa69cc14a942",
+              "name": "importance",
+              "value": "={{ $('Loop Over Items6').item.json.importance }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        4800,
+        -1320
+      ],
+      "id": "c42ed8d8-770f-4884-9721-aed8a5986930",
+      "name": "Set Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        3720,
+        -1320
+      ],
+      "id": "77c660c1-ca90-4470-9c3d-9d0b7356e7be",
+      "name": "Loop Over Items6"
+    },
+    {
+      "parameters": {
+        "content": "## Step 3 : Articles summarization and add to news_database\n- select important news, imporance score > 6\n- summarize news\n- add to news database\n",
+        "width": 620,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        3060,
+        -1100
+      ],
+      "id": "c3daabc8-9797-4de6-9b6a-10e9da5e1ace",
+      "name": "Sticky Note10"
+    },
+    {
+      "parameters": {
+        "content": "# Source 3: keyword-based news (Google News)\n1. 根據自己關注的關鍵字，透過NEWS API 進行文章蒐集。(關鍵字連結：https://docs.google.com/spreadsheets/d/1cOC5UExf-f0wgqWsb3TWRv65LqMBZN7OAWrOQZOIIuk/edit)",
+        "height": 1360,
+        "width": 5220,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -1380
+      ],
+      "id": "917cf457-0de5-4115-957e-3f642f160e06",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please classify the news into the well-defined categorise based on the following news information:\n\nClassify the following news article and return a JSON object with the keys: \n`category`, `relevance_score`, and `importance`:\n\nTitle: {{$json.title}}\nDescription: {{$json.description}}\nContent: {{$json.content}}\n",
+        "options": {
+          "systemMessage": "=## Role:\n\nYou are an expert text classifier specializing in Artificial Intelligence (AI), specifically in the areas of AI Agents, Large Language Models (LLMs), and their business applications, with a focus on the Taiwanese AI landscape.\n\n## Objectives:\n\nYour primary objective is to accurately categorize input text (articles, blog posts, etc.) into *one* of five predefined categories (including an \"Other\" category), providing a relevance score and an importance/novelty score for each classification.  You must output the results in a *strictly defined JSON format*.\n\n## Task:\n\nClassify input text and return a JSON object with the following keys: `category`, `relevance_score`, and `importance`.\n\n## Analyze Procedure:\n\n1.  **Input Data:** You will receive input text consisting of three parts:\n    *   `title`: The title of the article.\n    *   `description`: A brief description or summary of the article.\n    *   `content`: A few sentences, or short paragraph of the original article content.\n\n2.  **Initial Analysis (Focus on Title and Description):**\n    *   Begin by carefully reading and understanding the `title` and `description`. These two elements are *crucial* for determining the primary topic and purpose of the article.  They provide the core context.\n    *   Analyze `content`, use the provided `content` to support, confirm or adjust your initial assessment based on the title and description.\n\n3.  **Category Matching and Relevance Scoring:**\n    *   Compare the analyzed text (primarily the title and description, supported by the content) to the descriptions of the four main categories provided below.\n    *   Assign the text to the *single category* that best matches its primary theme and purpose.  **If none of the four main categories have a relevance score of 3 or higher, assign the text to the \"Other\" category.**\n    *   Determine the **relevance score**:\n        *   This score (an integer between 0 and 10) indicates how closely the text aligns with the chosen category.\n        *   `0`: Completely irrelevant.\n        *   `10`: Perfectly relevant.\n\n4.  **Single Category Rule:**\n    *   **Crucially, each piece of text must be assigned to *only one* category.** Even if multiple categories seem relevant, select the *best fit* based on the *dominant* theme and the relevance scores you've assigned. Use the priority of the categories (AI Agent Technologies and LLM Technical Updates, and AI-Taiwan are higher priority than Business Applications). **If the relevance score for the best-fitting main category is below 3, assign the text to \"Other\".**\n\n5.  **Importance/Novelty/Value Assessment and Scoring:**\n    *   Independently assess the importance, novelty, and overall value of the article's content.\n    *   Determine the **importance score**:\n        *   This score (an integer between 0 and 10) represents the perceived importance, novelty, and value of the content.\n        *   `0`: The content is considered overly broad, outdated, lacks substance (\"clickbait\" or \"content farm\" style), or deals with politically sensitive topics.  *Any politically sensitive content automatically receives a score of 0.*\n        *   `10`: The content is highly novel, important, and valuable.\n        *   Higher scores indicate more novel, significant, and valuable content.\n\n6.  **JSON Output:**\n    *   Output *only* a JSON object in the following format.  Do *not* include *any* additional text or explanations.\n\n    ```json\n    {\n      \"category\": \"<Category Name>\",\n      \"relevance_score\": <Integer between 0 and 10>,\n      \"importance\": <Integer between 0 and 10>\n    }\n    ```\n\n## Categories and Descriptions:\n\n1.  **AI Agent Technologies and Development (High Priority):**\n    *   *Description:*  Focuses on the core technologies, architectures, algorithms, development frameworks, startups, and technical breakthroughs related to Artificial Intelligence Agents (AI Agents). Emphasizes the technical details and development trends of AI Agents themselves.\n    *   *Keywords:*  \"AI Agent\", \"Autonomous Agent\", \"Multi-Agent System\", \"Agent Architecture\", \"Agent Framework\", \"Reinforcement Learning Agent\", \"Neuro-Symbolic Agent\", \"AI Workflow\".\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is the technical principles and architecture of AI Agents, *even if applications are mentioned*.  Distinguish from \"LLM Model\" by focusing on the overall design and operation of the *entire AI Agent*, not just a single LLM component. If LLM application details are prominent, consider the importance of those details.\n\n2.  **Large Language Model (LLM) Technical Specifications and Updates (High Priority):**\n    *   *Description:* Focuses on the technical specifications, model architectures, training methods, performance evaluations, version updates, API changes, new feature releases, and latest model information from major LLM providers (e.g., OpenAI, Google, Meta, Anthropic) of Large Language Models (LLMs).  Emphasizes the *technical characteristics* of LLMs.\n    *   *Keywords:* \"Large Language Model\", \"LLM\", \"Transformer Model\", \"GPT-4\", \"Gemini\", \"Llama 3\", \"Claude\", \"Model Fine-tuning\", \"RAG\", \"In-Context Learning\", \"Model Compression\", \"Quantization\", \"Distillation\", \"API Update\", \"Tokenizer\", \"Attention Mechanism\", \"Multimodal Model\", \"Function Calling\".\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is the technical specifications or updates of LLMs, *even if applications are mentioned*.  Distinguish from \"Business Applications\" by focusing on the *technical characteristics of the LLMs themselves*, rather than the commercial value of applications.\n\n3.  **AI-Taiwan (High Priority):**\n    *   *Description:* Focuses on the application and development of AI technologies within Taiwan. This includes news about Taiwanese-developed LLMs, localized AI applications, government initiatives related to AI in Taiwan, Taiwanese AI research, and the impact of AI on Taiwanese industries and society. The emphasis is on the *Taiwanese context* of AI development and deployment.\n    *   *Keywords:* \"Taiwan AI\", \"Taiwan LLM\", \"Taiwanese AI Application\", \"Localized AI\", \"Taiwan AI Research\", \"Taiwan AI Policy\", \"AI in Taiwan\", \"Taiwan AI Startups\", \"Taiwan Semiconductor AI\", \"Made in Taiwan AI.\"\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is on AI *within Taiwan*, even if it mentions general AI concepts or technologies.  Prioritize this category for Taiwan-specific content over the other categories, unless the content *very strongly* emphasizes the technical details of a non-Taiwanese AI Agent or LLM.\n\n4.  **AI-Driven Business Innovation Applications (Medium Priority):**\n    *   *Description:* Covers real-world examples of how various industries (e.g., finance, healthcare, manufacturing, retail, education) are using AI tools (including but not limited to AI Agents and LLMs) for process optimization, product innovation, customer experience enhancement, decision support, and new business models.  Focuses on how AI *solves specific business problems* and the resulting *business value*.\\n\n    *   *Keywords:* \"AI Application\", \"Business Application\", \"Industry Application\", \"Digital Transformation\", \"Automation\", \"Efficiency Improvement\", \"Cost Reduction\", \"Customer Experience\", \"Decision Support\", \"Intelligent Customer Service\", \"Supply Chain Optimization\", \"Product Design\", \"Marketing\", \"Generative AI Application\", \"AI-Driven\", \"AI-Powered\".\n    *   *Mutual Exclusivity:*  *Avoid including excessive technical details*. Focus on the *business benefits* of AI applications.  If the text discusses both AI Agent/LLM technical details *and* business applications, classify based on the *main focus*. If multiple categories fit, prioritize based on the order listed (AI Agent Technologies, LLM Tech Specs and AI-Taiwan have higher priority than Business Applications).\n\n5. **Other**:\n    *   *Description:* This category is used for any text that does not fit into the above four categories with a relevance score of 3 or lower.\n\n*   **Avoid Keyword Reliance:** The example keywords are provided as *guidance only*.  Do not rely solely on the presence of these keywords. Focus on the underlying meaning and intent of the text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2580,
+        -840
+      ],
+      "id": "e26962bc-73b8-43b7-ac48-ad7ba9a21739",
+      "name": "AI Agent - Categorization2",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// 取得 AI Agent的輸出\nconst rawInput = $input.first().json;\n\n// 提取 \"output\" 欄位中的字串\nlet jsonString = rawInput.output;\n\n// 檢查是否有 output 欄位\nif (!jsonString) {\n  throw new Error(\"json parser1 輸出中無法找到 'output' 欄位，請確認前一個節點的輸出結構\");\n}\n\n// 移除開頭的 ```json 和結尾的 ```，並清理多餘的換行與空格\njsonString = jsonString\n  .replace(/```json\\n?/, '')  // 移除開頭的 ```json 和可能的換行\n  .replace(/\\n?```/, '')      // 移除結尾的 ```\n  .replace(/\\n\\s*/g, '');     // 移除所有的換行與後續空格\n\n// 將清理後的字串解析為 JSON 物件\nconst parsedJson = JSON.parse(jsonString);\n\n// 回傳結構化的 JSON 格式，符合 n8n 的輸出規範\nreturn [{ json: parsedJson }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3000,
+        -2780
+      ],
+      "id": "c648da60-ef9c-4e2b-91a3-f40fc0358af4",
+      "name": "json parser3",
+      "retryOnFail": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        2360,
+        -2780
+      ],
+      "id": "5e7d8773-e8e0-4363-b03d-5d2bd93a97e7",
+      "name": "Loop Over Items7"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4caf75df-6c1f-4f00-b585-5987ab23b089",
+              "name": "reference_rss_id",
+              "value": "={{ $('Loop Over Items7').item.json.reference_rss_id }}",
+              "type": "string"
+            },
+            {
+              "id": "dd82e383-d0ca-4e13-8741-77b11ab60ca0",
+              "name": "title",
+              "value": "={{ $('Loop Over Items7').item.json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "8f7d74c1-9610-4d42-9e18-c528d5317aee",
+              "name": "topic",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "a5b32e40-8217-4c13-a60c-f6d36e70694b",
+              "name": "pubDate",
+              "value": "={{ $('Loop Over Items7').item.json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "b0677275-bb8f-4f2b-b193-feac15faa1d9",
+              "name": "link",
+              "value": "={{ $('Loop Over Items7').item.json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "bd41a9ac-a376-4ebc-86fe-fa18399e01f2",
+              "name": "relevance_score",
+              "value": "={{ $json.relevance_score }}",
+              "type": "number"
+            },
+            {
+              "id": "933164f2-b691-4b55-8d94-4b16c5ed133c",
+              "name": "importance",
+              "value": "={{ $json.importance }}",
+              "type": "number"
+            },
+            {
+              "id": "da6156f5-47fe-4c6b-858e-4f6c9f623c8e",
+              "name": "summary",
+              "value": "={{ $json.summary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3220,
+        -2780
+      ],
+      "id": "c1f890ed-6cad-42e5-bd04-c4e95c4f5a42",
+      "name": "Edit Fields4"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3760,
+        -2780
+      ],
+      "id": "29ad896c-2348-40e0-8725-b1f36289f2b9",
+      "name": "Wait3",
+      "webhookId": "2da6618c-40ea-4852-a243-4299f93f241f"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "950e6fe9-cc9c-4141-97d6-aefee35082f6",
+              "leftValue": "={{ $json.topic }}",
+              "rightValue": "=Other",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3420,
+        -2780
+      ],
+      "id": "243206ea-a7b0-4204-8e7e-a9b90e6aa72c",
+      "name": "If3"
+    },
+    {
+      "parameters": {
+        "url": "http://host.docker.internal:8080/i",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "a",
+              "value": "rss"
+            },
+            {
+              "name": "user",
+              "value": "admin"
+            },
+            {
+              "name": "token",
+              "value": "Test1234!"
+            },
+            {
+              "name": "hours",
+              "value": "=48"
+            },
+            {
+              "name": "nb",
+              "value": "=500"
+            },
+            {
+              "name": "pubdate",
+              "value": "P4D"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        800,
+        -2780
+      ],
+      "id": "38cbb841-db28-4ce7-8745-1bb1fc323f98",
+      "name": "RSS database1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fdb92917-4442-45c5-8e66-137c1c8c8d6b",
+              "name": "lastCheckTime",
+              "value": "={{ $now.toUTC() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1020,
+        -3000
+      ],
+      "id": "d0060835-94b0-4d2c-a337-2d81a531ba5b",
+      "name": "lastCheckedTime1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3dc19714-2a07-460c-be64-50fcd1eb8b68",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "e8745d80-c72b-4db9-8f43-4f01f86ae566",
+              "name": "link",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "749d9845-8c89-4ecd-8b71-031a462dcb81",
+              "name": "description",
+              "value": "={{ $json.description }}",
+              "type": "string"
+            },
+            {
+              "id": "47583a4d-725f-420b-a068-bce0269f1182",
+              "name": "pubDate",
+              "value": "={{ new Date($json.pubDate).toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "baf60330-d734-4205-9169-b7a5f1141176",
+              "name": "reference_rss_id",
+              "value": "={{ $json.guid }}",
+              "type": "string"
+            },
+            {
+              "id": "93c96c6a-90ca-45a9-88c4-9639756d33d1",
+              "name": "current_time",
+              "value": "={{ new Date($('Schedule Trigger').item.json.timestamp).toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "9eab5391-3658-47ac-8e68-a73853bbd6bc",
+              "name": "last_check_time",
+              "value": "={{ $('Extract from File').item.json.data[0].lastCheckTime }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1580,
+        -2780
+      ],
+      "id": "3a2c6831-7eb9-4358-b02c-364988a4f576",
+      "name": "Get Variables1"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 151770319,
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=151770319"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "title": "={{ $json.title }}",
+            "pub_date": "={{ $json.pubDate }}",
+            "topic": "={{ $json.topic }}",
+            "reference_id": "={{ $json.reference_rss_id }}",
+            "summary": "={{ $json.summary }}",
+            "url": "={{ $json.url }}",
+            "status": "2 - Summarized",
+            "relevance_score": "={{ $json.relevance_score }}",
+            "importance": "={{ $json.importance }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "reference_id",
+              "displayName": "reference_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub_date",
+              "displayName": "pub_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relevance_score",
+              "displayName": "relevance_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "useAppend": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        5020,
+        -1320
+      ],
+      "id": "76856048-8a84-4060-9d4a-e88d622a7998",
+      "name": "Add to news_database2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 151770319,
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=151770319"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "reference_id": "={{ $json.reference_rss_id }}",
+            "title": "={{ $json.title }}",
+            "topic": "={{ $json.topic }}",
+            "pub_date": "={{ $json.pubDate }}",
+            "relevance_score": "={{ $json.relevance_score }}",
+            "importance": "={{ $json.importance }}",
+            "status": "2 - Summarized",
+            "url": "={{ $json.link }}",
+            "summary": "={{ $json.summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "reference_id",
+              "displayName": "reference_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub_date",
+              "displayName": "pub_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "relevance_score",
+              "displayName": "relevance_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action",
+              "displayName": "Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3580,
+        -2920
+      ],
+      "id": "584cc413-5d4f-41f0-bd9e-955ae57cf7cb",
+      "name": "Add to news_database1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "Label_8982256647532788657"
+          ],
+          "receivedAfter": "={{ $json.data[0].lastCheckTime }}"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1080,
+        -1880
+      ],
+      "id": "cb706213-d039-479e-9994-3a2ee33ca6aa",
+      "name": "Gmail",
+      "webhookId": "029f8f8b-3c7c-48e0-8c89-764b4415044b",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "eltvBNs9oxZa8Jc8",
+          "name": "Gmail - CoL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n\nSummarize the article and Classify it based on the following article information and return a JSON object with the keys: \n`summary`,`category`, `relevance_score`, and `importance`:\n\nArticle information:\nTitle: {{$json.title}}\nContent: {{$json.description}}\n",
+        "options": {
+          "systemMessage": "=# Role:\nYou are a professional AI assistant specializing in news analysis, combining expertise in summarization and text classification, with a focus on Artificial Intelligence (AI), particularly AI Agents, Large Language Models (LLMs), and their applications in the Taiwanese context.\n\n# Task Goal:\n\n1.  Summarize news information content and return the summary in **Markdown format**.  The output language must be the same as the input article.\n2.  Classify the input text (article) into one of five predefined categories, providing a relevance score and an importance/novelty score. Output the classification results in a strictly defined JSON format.\n\n## Input:\n\nYou will receive input text consisting of two parts:\n\n*   `title`: The title of the article.\n*   `content`: The original article content in Markdown format.\n\n## Output Format:\n\n\nThe output should be a single JSON object with the following keys:\n\n```json\n{\n  \"summary\": \"<Markdown formatted summary>\",\n  \"category\": \"<Category Name>\",\n  \"relevance_score\": <Integer between 0 and 10>,\n  \"importance\": <Integer between 0 and 10>\n}\n\n    *Output *only* the JSON object.  Do *not* include *any* additional text or explanations in this section.*\n\n\n# Task Procedure:\n\n1.  **Summarization Phase:**\n\n    *   **Content Analysis:** Carefully read and analyze the input news article (`content`) in Markdown format. Identify the language of the input article.\n    *   **Section Summarization:** For each section under a heading in the article, extract key information and create a concise summary in **the same language as the input article**. Write these summaries in the **Detailed Summary** section.\n    *   **Takeaway Synthesis:** Synthesize the content from the **Detailed Summary**. Consider the core value of the article and the key points readers should focus on.  Identify 3-5 takeaways and write them in **the same language as the input article** in the **Takeaway** section as a Markdown unordered list.\n\t\t*   **Markdown Formatting**: Combine the \"Detailed Summary\" and \"Takeaways\" into a single Markdown-formatted string. This string will be the value of the \"summary\" key in the final JSON output. Use the following Markdown structure:\n\n\t\t```markdown\n\t\t## Takeaway\n\t\t\n\t\t- Takeaway 1:  ... (Most important point one of the article - in the same language as input)\n\t\t- Takeaway 2:  ... (Most important point two of the article - in the same language as input)\n\t\t- Takeaway 3:  ... (Most important point three of the article - in the same language as input)\n\t\t- ...\n\t\t\n\t\t## Detailed Summary\n\t\t\n\t\t### Section Heading One\n\t\t- Summary of content under Section Heading One... (in the same language as input)\n\t\t- ...\n\t\t\n\t\t### Section Heading Two\n\t\t- Summary of content under Section Heading Two... (in the same language as input)\n\t\t- ...\n\n2.  **Classification Phase:**\n\n    *   **Input Data:**  Use the following data for classification:\n        *   `title`: The original title of the article.\n        *   `content`: The original article content.\n        *   `summary`: The complete summary generated in Step 1 (both Detailed Summary and Takeaways).  This provides a condensed and focused representation of the article's content.\n\n    *   **Initial Analysis (Focus on Title, Content, and Summary):**\n        *   Carefully consider the `title`, `content`, and the generated `summary`. These elements are *crucial* for determining the primary topic and purpose of the article.\n\n    *  **Category Matching and Relevance Scoring:**\n        *   Compare the analyzed text (title, content, and summary) to the descriptions of the five main categories provided below.\n        *   Assign the text to the *single category* that best matches its primary theme and purpose.  **If none of the four main categories have a relevance score of 6 or higher, assign the text to the \"Other\" category.**\n        *   Determine the **relevance score**:\n            *   This score (an integer between 0 and 10) indicates how closely the text aligns with the chosen category.\n            *   `0`: Completely irrelevant.\n            *   `10`: Perfectly relevant.\n\n    *   **Single Category Rule:**\n        *   **Crucially, each piece of text must be assigned to *only one* category.** Even if multiple categories seem relevant, select the *best fit* based on the *dominant* theme and the relevance scores you've assigned. Use the priority of the categories (AI Agent Technologies and LLM Technical Updates, and AI-Taiwan are higher priority than Business Applications).  **If the relevance score for the best-fitting main category is below 3, assign the text to \"Other\".**\n\n    *   **Importance/Novelty/Value Assessment and Scoring:**\n        *   Independently assess the importance, novelty, and overall value of the article's content, considering the original content and the summary.\n        *   Determine the **importance score**:\n            *   This score (an integer between 0 and 10) represents the perceived importance, novelty, and value of the content.\n            *   `0`: The content is considered overly broad, outdated, lacks substance (\"clickbait\" or \"content farm\" style), or deals with politically sensitive topics.  *Any politically sensitive content automatically receives a score of 0.*\n            *   `10`: The content is highly novel, important, and valuable.\n            *   Higher scores indicate more novel, significant, and valuable content.\n\n    *  **JSON Output:** Output the classification results in the JSON format specified above.\n\n## Categories and Descriptions:\n\n1.  **AI Agent Technologies and Development (High Priority):**\n    *   *Description:*  Focuses on the core technologies, architectures, algorithms, development frameworks, startups, and technical breakthroughs related to Artificial Intelligence Agents (AI Agents). Emphasizes the technical details and development trends of AI Agents themselves.\n    *   *Keywords:*  \"AI Agent\", \"Autonomous Agent\", \"Multi-Agent System\", \"Agent Architecture\", \"Agent Framework\", \"Reinforcement Learning Agent\", \"Neuro-Symbolic Agent\", \"AI Workflow\".\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is the technical principles and architecture of AI Agents, *even if applications are mentioned*.  Distinguish from \"LLM Model\" by focusing on the overall design and operation of the *entire AI Agent*, not just a single LLM component. If LLM application details are prominent, consider the importance of those details.\n\n2.  **Large Language Model (LLM) Technical Specifications and Updates (High Priority):**\n    *   *Description:* Focuses on the technical specifications, model architectures, training methods, performance evaluations, version updates, API changes, new feature releases, and latest model information from major LLM providers (e.g., OpenAI, Google, Meta, Anthropic) of Large Language Models (LLMs).  Emphasizes the *technical characteristics* of LLMs.\n    *   *Keywords:* \"Large Language Model\", \"LLM\", \"Transformer Model\", \"GPT-4\", \"Gemini\", \"Llama 3\", \"Claude\", \"Model Fine-tuning\", \"RAG\", \"In-Context Learning\", \"Model Compression\", \"Quantization\", \"Distillation\", \"API Update\", \"Tokenizer\", \"Attention Mechanism\", \"Multimodal Model\", \"Function Calling\".\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is the technical specifications or updates of LLMs, *even if applications are mentioned*.  Distinguish from \"Business Applications\" by focusing on the *technical characteristics of the LLMs themselves*, rather than the commercial value of applications.\n\n3.  **AI-Taiwan (High Priority):**\n    *   *Description:* Focuses on the application and development of AI technologies within Taiwan. This includes news about Taiwanese-developed LLMs, localized AI applications, government initiatives related to AI in Taiwan, Taiwanese AI research, and the impact of AI on Taiwanese industries and society. The emphasis is on the *Taiwanese context* of AI development and deployment.\n    *   *Keywords:* \"Taiwan AI\", \"Taiwan LLM\", \"Taiwanese AI Application\", \"Localized AI\", \"Taiwan AI Research\", \"Taiwan AI Policy\", \"AI in Taiwan\", \"Taiwan AI Startups\", \"Taiwan Semiconductor AI\", \"Made in Taiwan AI.\"\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is on AI *within Taiwan*, even if it mentions general AI concepts or technologies.  Prioritize this category for Taiwan-specific content over the other categories, unless the content *very strongly* emphasizes the technical details of a non-Taiwanese AI Agent or LLM.\n\n4.  **AI-Driven Business Innovation Applications (Medium Priority):**\n    *   *Description:* Covers real-world examples of how various industries (e.g., finance, healthcare, manufacturing, retail, education) are using AI tools (including but not limited to AI Agents and LLMs) for process optimization, product innovation, customer experience enhancement, decision support, and new business models.  Focuses on how AI *solves specific business problems* and the resulting *business value*.\\n\n    *   *Keywords:* \"AI Application\", \"Business Application\", \"Industry Application\", \"Digital Transformation\", \"Automation\", \"Efficiency Improvement\", \"Cost Reduction\", \"Customer Experience\", \"Decision Support\", \"Intelligent Customer Service\", \"Supply Chain Optimization\", \"Product Design\", \"Marketing\", \"Generative AI Application\", \"AI-Driven\", \"AI-Powered\".\n    *   *Mutual Exclusivity:*  *Avoid including excessive technical details*. Focus on the *business benefits* of AI applications.  If the text discusses both AI Agent/LLM technical details *and* business applications, classify based on the *main focus*. If multiple categories fit, prioritize based on the order listed (AI Agent Technologies, LLM Tech Specs and AI-Taiwan have higher priority than Business Applications).\n\n5. **Other**:\n    *   *Description:* This category is used for any text that does not fit into the above four categories with a all relevance scores of 5 or lower.\n\n*   **Avoid Keyword Reliance:** The example keywords are provided as *guidance only*.  Do not rely solely on the presence of these keywords. Focus on the underlying meaning and intent of the text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1920,
+        -1900
+      ],
+      "id": "2583d104-c000-4127-b5b7-b083e7b7be36",
+      "name": "AI Agent - Categorization"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1620,
+        -1880
+      ],
+      "id": "b1b6209b-8f45-4d7c-b8c2-298b9cf8b40c",
+      "name": "Loop Over Items8"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4caf75df-6c1f-4f00-b585-5987ab23b089",
+              "name": "reference_rss_id",
+              "value": "={{ $('Loop Over Items8').item.json.reference_rss_id }}",
+              "type": "string"
+            },
+            {
+              "id": "dd82e383-d0ca-4e13-8741-77b11ab60ca0",
+              "name": "title",
+              "value": "={{ $('Loop Over Items8').item.json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "8f7d74c1-9610-4d42-9e18-c528d5317aee",
+              "name": "topic",
+              "value": "={{ $json.category }}",
+              "type": "string"
+            },
+            {
+              "id": "a5b32e40-8217-4c13-a60c-f6d36e70694b",
+              "name": "pubDate",
+              "value": "={{ $('Loop Over Items8').item.json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "b0677275-bb8f-4f2b-b193-feac15faa1d9",
+              "name": "link",
+              "value": "={{ $('Loop Over Items8').item.json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "bd41a9ac-a376-4ebc-86fe-fa18399e01f2",
+              "name": "relevance_score",
+              "value": "={{ $json.relevance_score }}",
+              "type": "number"
+            },
+            {
+              "id": "933164f2-b691-4b55-8d94-4b16c5ed133c",
+              "name": "importance",
+              "value": "={{ $json.importance }}",
+              "type": "number"
+            },
+            {
+              "id": "da6156f5-47fe-4c6b-858e-4f6c9f623c8e",
+              "name": "summary",
+              "value": "={{ $json.summary }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2560,
+        -1900
+      ],
+      "id": "007cde81-3172-4dfb-96f9-01cd72412e2c",
+      "name": "Edit Fields5"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3220,
+        -1820
+      ],
+      "id": "84d9788b-6064-45bc-ab5d-adc15a0014d5",
+      "name": "Wait",
+      "webhookId": "b1f25b3a-2d3f-472e-a5bc-b2e1dd0a0de4"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "950e6fe9-cc9c-4141-97d6-aefee35082f6",
+              "leftValue": "={{ $json.topic }}",
+              "rightValue": "=Other",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2760,
+        -1900
+      ],
+      "id": "4b73fcd1-32bb-459f-8792-98c8cf0624bc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "3dc19714-2a07-460c-be64-50fcd1eb8b68",
+              "name": "title",
+              "value": "={{ $json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "e8745d80-c72b-4db9-8f43-4f01f86ae566",
+              "name": "link",
+              "value": "={{ $json.threadId }}",
+              "type": "string"
+            },
+            {
+              "id": "749d9845-8c89-4ecd-8b71-031a462dcb81",
+              "name": "description",
+              "value": "={{ $json.text }}",
+              "type": "string"
+            },
+            {
+              "id": "47583a4d-725f-420b-a068-bce0269f1182",
+              "name": "pubDate",
+              "value": "={{ $json.date }}",
+              "type": "string"
+            },
+            {
+              "id": "baf60330-d734-4205-9169-b7a5f1141176",
+              "name": "reference_rss_id",
+              "value": "=",
+              "type": "string"
+            },
+            {
+              "id": "93c96c6a-90ca-45a9-88c4-9639756d33d1",
+              "name": "current_time",
+              "value": "={{ new Date($('Schedule Trigger').item.json.timestamp).toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "9eab5391-3658-47ac-8e68-a73853bbd6bc",
+              "name": "last_check_time",
+              "value": "={{ $('Extract from File').item.json.data[0].lastCheckTime }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1320,
+        -1880
+      ],
+      "id": "261d06fc-b1ca-4077-86ae-bdc23d21ea35",
+      "name": "Get Variables"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 151770319,
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=151770319"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "reference_id": "={{ $json.reference_rss_id }}",
+            "title": "={{ $json.title }}",
+            "topic": "={{ $json.topic }}",
+            "pub_date": "={{ $json.pubDate }}",
+            "relevance_score": "={{ $json.relevance_score }}",
+            "importance": "={{ $json.importance }}",
+            "status": "2 - Summarized",
+            "url": "={{ $json.link }}",
+            "summary": "={{ $json.summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "reference_id",
+              "displayName": "reference_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub_date",
+              "displayName": "pub_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "relevance_score",
+              "displayName": "relevance_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action",
+              "displayName": "Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3000,
+        -1900
+      ],
+      "id": "6ef51557-e375-4b13-ad93-aa346f639042",
+      "name": "Add to news_database",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# Source 1: RSS\n1. 使用自架FreshRSS平台，蒐集「RSS news」。\n2. 使用filter過濾文章，\n- lastTimeCheck filter : 根據前次蒐集時間，過濾已蒐過內容，確保資源不重複。\n- keyword filter : 透過REGEX方法，過濾自身關注的關鍵字 (關鍵字連結：https://docs.google.com/spreadsheets/d/1cOC5UExf-f0wgqWsb3TWRv65LqMBZN7OAWrOQZOIIuk/edit)\n\n- {{ $now.minus({days: 1}).startOf('day').toUTC() }}\n- {{ $now.minus({hours: 6}).toUTC() }}",
+        "height": 780,
+        "width": 3840,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        480,
+        -3240
+      ],
+      "id": "a90e71e1-91ca-4e32-9e6a-42552b2987b6",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "27b8999e-0e54-489e-8e19-c7f1db06e0e6",
+              "leftValue": "={{ $json.pubDate }}",
+              "rightValue": "={{ $json.last_check_time }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1780,
+        -2780
+      ],
+      "id": "42f07ba0-0ee2-4c96-a49b-57aba473a196",
+      "name": "Time Check Filter"
+    },
+    {
+      "parameters": {
+        "content": "# Source 2: Gmail Subscription\n- 蒐集GMAIL特定標籤內容：可至Gmail透過篩選器，將特定mail信件進行標籤。\n- 進行文章內容分類與摘要",
+        "height": 600,
+        "width": 3840,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        500,
+        -2200
+      ],
+      "id": "a0680680-d776-47b9-a405-bab0c3895b13",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        5220,
+        -1320
+      ],
+      "id": "91fe3c81-4b16-4c9c-9338-d9037784ae58",
+      "name": "Wait1",
+      "webhookId": "a9675f13-d9f3-43dc-90b7-a4588914e58c"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1028865261,
+          "mode": "list",
+          "cachedResultName": "web-search_temp_news",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=1028865261"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url": "={{ $('Loop Over Items6').item.json.url }}",
+            "checked": "3-Final-Checked"
+          },
+          "matchingColumns": [
+            "url"
+          ],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "description",
+              "displayName": "description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub_Date",
+              "displayName": "pub_Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "checked",
+              "displayName": "checked",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "relevance_score",
+              "displayName": "relevance_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        5420,
+        -1320
+      ],
+      "id": "06999165-9696-4a5d-8f55-684b8e6c2c99",
+      "name": "Updated checked Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1300,
+        860
+      ],
+      "id": "d723214c-5464-4496-922c-02ecd72c26e3",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 446751611,
+          "mode": "list",
+          "cachedResultName": "articles_to_publish",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=446751611"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "url": "={{ $('Loop Over Items1').item.json.url }}",
+            "summary_tw": "={{ $json.output }}",
+            "Action": "Not Read"
+          },
+          "matchingColumns": [
+            "url"
+          ],
+          "schema": [
+            {
+              "id": "reference_id",
+              "displayName": "reference_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub_date",
+              "displayName": "pub_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary_tw",
+              "displayName": "summary_tw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Action",
+              "displayName": "Action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relevance_score",
+              "displayName": "relevance_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fb_post",
+              "displayName": "fb_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "x_post",
+              "displayName": "x_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "threads_post",
+              "displayName": "threads_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url_refined",
+              "displayName": "url_refined",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1980,
+        860
+      ],
+      "id": "4fdbb3aa-1774-47d0-80b3-c00528246405",
+      "name": "Add Summary_tw",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1500,
+        720
+      ],
+      "id": "ff61065f-10d9-43a8-b50a-88dc3931c9e2",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "sendTo": "stevenwang.col@gmail.com",
+        "subject": "新聞閱讀DB已更新，請前往閱讀。",
+        "message": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?gid=446751611#gid=446751611",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1740,
+        680
+      ],
+      "id": "37fc9ac8-08ce-4c0b-b1bb-04a8309dcf46",
+      "name": "Send email to remind me",
+      "webhookId": "d43d705e-5e2a-4f76-a92c-4e7c556f719c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IolonRfaigFNS9Ot",
+          "name": "Gmail account - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "f3d5d15c-115f-4dc9-a734-10e332002488",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "(?:Claude.*Anthropic|Anthropic.*Claude)|(?:Google.*Gemini|Gemini.*Google)|(?:Google.*Gemma|Gemma.*Google)|Grok|(?:Alibaba.*QwQ|QwQ.*Alibaba)|(?:Alibaba.*Qwen|Qwen.*Alibaba)|(?:Baidu.*ERINE|ERINE.*Baidu)|DeepSeek|(?:Meta.*Llama|Llama.*Meta)|(?:OpenAI.*GPT|GPT.*OpenAI)|(?:OpenAI.*o1|o1.*OpenAI)|(?:OpenAI.*o3|o3.*OpenAI)|(?:AI\\b|AI\\s+Agent|LLM)|Perplexity|Manus|Hunyuan|(?:MCP.*Model|Model.*MCP)",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            },
+            {
+              "id": "054563fa-41df-463a-b662-02c1cd3a7b4d",
+              "leftValue": "={{ $json.description }}",
+              "rightValue": "(?:Claude.*Anthropic|Anthropic.*Claude)|(?:Google.*Gemini|Gemini.*Google)|(?:Google.*Gemma|Gemma.*Google)|Grok|(?:Alibaba.*QwQ|QwQ.*Alibaba)|(?:Alibaba.*Qwen|Qwen.*Alibaba)|(?:Baidu.*ERINE|ERINE.*Baidu)|DeepSeek|(?:Meta.*Llama|Llama.*Meta)|(?:OpenAI.*GPT|GPT.*OpenAI)|(?:OpenAI.*o1|o1.*OpenAI)|(?:OpenAI.*o3|o3.*OpenAI)|(?:AI\\b|AI\\s+Agent|LLM)|Perplexity|Manus|Hunyuan|(?:MCP.*Model|Model.*MCP)",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        1980,
+        -2780
+      ],
+      "id": "155f4f66-148a-4a67-8302-d5c65cc27028",
+      "name": "keyword filter"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1028865261,
+          "mode": "list",
+          "cachedResultName": "web-search_temp_news",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=1028865261"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "checked",
+              "lookupValue": "No"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1840,
+        -720
+      ],
+      "id": "e362e7a4-8290-4f95-9f41-d98718a3115b",
+      "name": "Get news with Not Checked Yet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1028865261,
+          "mode": "list",
+          "cachedResultName": "web-search_temp_news",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=1028865261"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "checked",
+              "lookupValue": "2-Categorized"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3080,
+        -1320
+      ],
+      "id": "d0513c48-15e7-4563-9039-8a36d9d0db29",
+      "name": "Get Categorized News",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Final step : Choose Imporanat News and send email to me.",
+        "height": 140,
+        "width": 760,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        340
+      ],
+      "id": "e98d1c12-0349-4cb9-aad1-dd6e523c4e72",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 446751611,
+          "mode": "list",
+          "cachedResultName": "articles_to_publish",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=446751611"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "reference_id": "={{ $json.reference_id }}",
+            "title": "={{ $json.title }}",
+            "topic": "={{ $json.topic }}",
+            "pub_date": "={{ $json.pub_date }}",
+            "summary": "={{ $json.summary }}",
+            "url": "={{ $json.url }}",
+            "relevance_score": "={{ $json.relevance_score }}",
+            "importance": "={{ $json.importance }}",
+            "source": "外部連結",
+            "action": "Not Read"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "reference_id",
+              "displayName": "reference_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub_date",
+              "displayName": "pub_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary",
+              "displayName": "summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "summary_tw",
+              "displayName": "summary_tw",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "action",
+              "displayName": "action",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "type",
+              "displayName": "type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url",
+              "displayName": "url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "relevance_score",
+              "displayName": "relevance_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "importance",
+              "displayName": "importance",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "fb_post",
+              "displayName": "fb_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "x_post",
+              "displayName": "x_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "threads_post",
+              "displayName": "threads_post",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "url_refined",
+              "displayName": "url_refined",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1320,
+        600
+      ],
+      "id": "61372b33-ff03-4861-99a7-744023317ceb",
+      "name": "Add to article_to_publish",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2480,
+        -2540
+      ],
+      "id": "2ab77f33-70e4-4c20-aac5-56751fc1d286",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7F0UQlzlnytDNcUg",
+          "name": "Gemini - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=請翻譯以下內容：\n {{ $json.summary }}",
+        "options": {
+          "systemMessage": "# 角色\n專業台灣翻譯師，精通台灣在地用語，同時具備高度摘要能力。\n\n# 任務\n1.  **輸入**: Markdown 格式文章摘要。\n2.  **翻譯**: 將內容翻譯成台灣慣用的繁體中文，並保留原 Markdown 格式。\n3.  **摘要**: 根據前一步驟，為此篇內容進行一句話摘要，並寫在最前面，約莫35個繁體中文字。\n4.  **輸出**: 僅回傳翻譯與摘要結果，無需任何說明。"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        1580,
+        860
+      ],
+      "id": "a822dc36-9a01-4d0d-8a4e-620492b1929f",
+      "name": "AI Agent1 - summary in zh-tw"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n\nSummarize the article and Classify it based on the following article information and return a JSON object with the keys: \n`summary`,`category`, `relevance_score`, and `importance`:\n\nArticle information:\nTitle: {{$json.title}}\nContent: {{$json.description}}\n",
+        "options": {
+          "systemMessage": "=# Role:\nYou are a professional AI assistant specializing in news analysis, combining expertise in summarization and text classification, with a focus on Artificial Intelligence (AI), particularly AI Agents, Large Language Models (LLMs), and their applications in the Taiwanese context.\n\n# Task Goal:\n\n1.  Summarize news information content and return the summary in **Markdown format**.  The output language must be the same as the input article.\n2.  Classify the input text (article) into one of five predefined categories, providing a relevance score and an importance/novelty score. Output the classification results in a strictly defined JSON format.\n\n## Input:\n\nYou will receive input text consisting of two parts:\n\n*   `title`: The title of the article.\n*   `content`: The original article content in Markdown format.\n\n## Output Format:\n\n\nThe output should be a single JSON object with the following keys:\n\n```json\n{\n  \"summary\": \"<Markdown formatted summary>\",\n  \"category\": \"<Category Name>\",\n  \"relevance_score\": <Integer between 0 and 10>,\n  \"importance\": <Integer between 0 and 10>\n}\n\n    *Output *only* the JSON object.  Do *not* include *any* additional text or explanations in this section.*\n\n\n# Task Procedure:\n\n1.  **Summarization Phase:**\n\n    *   **Content Analysis:** Carefully read and analyze the input news article (`content`) in Markdown format. Identify the language of the input article.\n    *   **Section Summarization:** For each section under a heading in the article, extract key information and create a concise summary in **the same language as the input article**. Write these summaries in the **Detailed Summary** section.\n    *   **Takeaway Synthesis:** Synthesize the content from the **Detailed Summary**. Consider the core value of the article and the key points readers should focus on.  Identify 3-5 takeaways and write them in **the same language as the input article** in the **Takeaway** section as a Markdown unordered list.\n\t\t*   **Markdown Formatting**: Combine the \"Detailed Summary\" and \"Takeaways\" into a single Markdown-formatted string. This string will be the value of the \"summary\" key in the final JSON output. Use the following Markdown structure:\n\n\t\t```markdown\n\t\t## Takeaway\n\t\t\n\t\t- Takeaway 1:  ... (Most important point one of the article - in the same language as input)\n\t\t- Takeaway 2:  ... (Most important point two of the article - in the same language as input)\n\t\t- Takeaway 3:  ... (Most important point three of the article - in the same language as input)\n\t\t- ...\n\t\t\n\t\t## Detailed Summary\n\t\t\n\t\t### Section Heading One\n\t\t- Summary of content under Section Heading One... (in the same language as input)\n\t\t- ...\n\t\t\n\t\t### Section Heading Two\n\t\t- Summary of content under Section Heading Two... (in the same language as input)\n\t\t- ...\n\n2.  **Classification Phase:**\n\n    *   **Input Data:**  Use the following data for classification:\n        *   `title`: The original title of the article.\n        *   `content`: The original article content.\n        *   `summary`: The complete summary generated in Step 1 (both Detailed Summary and Takeaways).  This provides a condensed and focused representation of the article's content.\n\n    *   **Initial Analysis (Focus on Title, Content, and Summary):**\n        *   Carefully consider the `title`, `content`, and the generated `summary`. These elements are *crucial* for determining the primary topic and purpose of the article.\n\n    *  **Category Matching and Relevance Scoring:**\n        *   Compare the analyzed text (title, content, and summary) to the descriptions of the five main categories provided below.\n        *   Assign the text to the *single category* that best matches its primary theme and purpose.  **If none of the four main categories have a relevance score of 6 or higher, assign the text to the \"Other\" category.**\n        *   Determine the **relevance score**:\n            *   This score (an integer between 0 and 10) indicates how closely the text aligns with the chosen category.\n            *   `0`: Completely irrelevant.\n            *   `10`: Perfectly relevant.\n\n    *   **Single Category Rule:**\n        *   **Crucially, each piece of text must be assigned to *only one* category.** Even if multiple categories seem relevant, select the *best fit* based on the *dominant* theme and the relevance scores you've assigned. Use the priority of the categories (AI Agent Technologies and LLM Technical Updates, and AI-Taiwan are higher priority than Business Applications).  **If the relevance score for the best-fitting main category is below 3, assign the text to \"Other\".**\n\n    *   **Importance/Novelty/Value Assessment and Scoring:**\n        *   Independently assess the importance, novelty, and overall value of the article's content, considering the original content and the summary.\n        *   Determine the **importance score**:\n            *   This score (an integer between 0 and 10) represents the perceived importance, novelty, and value of the content.\n            *   `0`: The content is considered overly broad, outdated, lacks substance (\"clickbait\" or \"content farm\" style), or deals with politically sensitive topics.  *Any politically sensitive content automatically receives a score of 0.*\n            *   `10`: The content is highly novel, important, and valuable.\n            *   Higher scores indicate more novel, significant, and valuable content.\n\n    *  **JSON Output:** Output the classification results in the JSON format specified above.\n\n## Categories and Descriptions:\n\n1.  **AI Agent Technologies and Development (High Priority):**\n    *   *Description:*  Focuses on the core technologies, architectures, algorithms, development frameworks, startups, and technical breakthroughs related to Artificial Intelligence Agents (AI Agents). Emphasizes the technical details and development trends of AI Agents themselves.\n    *   *Keywords:*  \"AI Agent\", \"Autonomous Agent\", \"Multi-Agent System\", \"Agent Architecture\", \"Agent Framework\", \"Reinforcement Learning Agent\", \"Neuro-Symbolic Agent\", \"AI Workflow\".\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is the technical principles and architecture of AI Agents, *even if applications are mentioned*.  Distinguish from \"LLM Model\" by focusing on the overall design and operation of the *entire AI Agent*, not just a single LLM component. If LLM application details are prominent, consider the importance of those details.\n\n2.  **Large Language Model (LLM) Technical Specifications and Updates (High Priority):**\n    *   *Description:* Focuses on the technical specifications, model architectures, training methods, performance evaluations, version updates, API changes, new feature releases, and latest model information from major LLM providers (e.g., OpenAI, Google, Meta, Anthropic) of Large Language Models (LLMs).  Emphasizes the *technical characteristics* of LLMs.\n    *   *Keywords:* \"Large Language Model\", \"LLM\", \"Transformer Model\", \"GPT-4\", \"Gemini\", \"Llama 3\", \"Claude\", \"Model Fine-tuning\", \"RAG\", \"In-Context Learning\", \"Model Compression\", \"Quantization\", \"Distillation\", \"API Update\", \"Tokenizer\", \"Attention Mechanism\", \"Multimodal Model\", \"Function Calling\".\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is the technical specifications or updates of LLMs, *even if applications are mentioned*.  Distinguish from \"Business Applications\" by focusing on the *technical characteristics of the LLMs themselves*, rather than the commercial value of applications.\n\n3.  **AI-Taiwan (High Priority):**\n    *   *Description:* Focuses on the application and development of AI technologies within Taiwan. This includes news about Taiwanese-developed LLMs, localized AI applications, government initiatives related to AI in Taiwan, Taiwanese AI research, and the impact of AI on Taiwanese industries and society. The emphasis is on the *Taiwanese context* of AI development and deployment.\n    *   *Keywords:* \"Taiwan AI\", \"Taiwan LLM\", \"Taiwanese AI Application\", \"Localized AI\", \"Taiwan AI Research\", \"Taiwan AI Policy\", \"AI in Taiwan\", \"Taiwan AI Startups\", \"Taiwan Semiconductor AI\", \"Made in Taiwan AI.\"\n    *   *Mutual Exclusivity:* Categorize here if the primary focus is on AI *within Taiwan*, even if it mentions general AI concepts or technologies.  Prioritize this category for Taiwan-specific content over the other categories, unless the content *very strongly* emphasizes the technical details of a non-Taiwanese AI Agent or LLM.\n\n4.  **AI-Driven Business Innovation Applications (Medium Priority):**\n    *   *Description:* Covers real-world examples of how various industries (e.g., finance, healthcare, manufacturing, retail, education) are using AI tools (including but not limited to AI Agents and LLMs) for process optimization, product innovation, customer experience enhancement, decision support, and new business models.  Focuses on how AI *solves specific business problems* and the resulting *business value*.\\n\n    *   *Keywords:* \"AI Application\", \"Business Application\", \"Industry Application\", \"Digital Transformation\", \"Automation\", \"Efficiency Improvement\", \"Cost Reduction\", \"Customer Experience\", \"Decision Support\", \"Intelligent Customer Service\", \"Supply Chain Optimization\", \"Product Design\", \"Marketing\", \"Generative AI Application\", \"AI-Driven\", \"AI-Powered\".\n    *   *Mutual Exclusivity:*  *Avoid including excessive technical details*. Focus on the *business benefits* of AI applications.  If the text discusses both AI Agent/LLM technical details *and* business applications, classify based on the *main focus*. If multiple categories fit, prioritize based on the order listed (AI Agent Technologies, LLM Tech Specs and AI-Taiwan have higher priority than Business Applications).\n\n5. **Other**:\n    *   *Description:* This category is used for any text that does not fit into the above four categories with a all relevance scores of 5 or lower.\n\n*   **Avoid Keyword Reliance:** The example keywords are provided as *guidance only*.  Do not rely solely on the presence of these keywords. Focus on the underlying meaning and intent of the text."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        2620,
+        -2780
+      ],
+      "id": "b7529ef8-0ee1-4651-9dcf-1c50d5490a93",
+      "name": "AI Agent - Categorization & Summerization",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw",
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 151770319,
+          "mode": "list",
+          "cachedResultName": "news_database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit#gid=151770319"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        580,
+        760
+      ],
+      "id": "c365b6c4-9333-4ab8-8cf5-504db31b8f54",
+      "name": "Get news_dataset",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "424a1d42-0129-4ba5-9545-c93b0b7c12c5",
+              "leftValue": "={{ $json.importance }}",
+              "rightValue": 7,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            },
+            {
+              "id": "ab0e341f-5df3-4ec5-9a3d-45065d8912bf",
+              "leftValue": "={{ $json.pub_date }}",
+              "rightValue": "={{ $('Extract from File').item.json.data[0].lastCheckTime }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            },
+            {
+              "id": "54b58e63-9cb0-4ec3-8908-4e09d51692bf",
+              "leftValue": "={{ $json.relevance_score }}",
+              "rightValue": 7,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        960,
+        760
+      ],
+      "id": "50355b09-20d4-49f3-b15f-19a49f58871d",
+      "name": "Importance mail"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        3560,
+        -840
+      ],
+      "id": "5678a9c9-47c5-40db-a464-2ccb9aacf5eb",
+      "name": "Wait4",
+      "webhookId": "7ca31890-00b2-42d3-ad5c-0a97c87cf510"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1800,
+        -1660
+      ],
+      "id": "d899a466-7d9c-4117-952f-7d0277ee6f48",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7F0UQlzlnytDNcUg",
+          "name": "Gemini - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2400,
+        -600
+      ],
+      "id": "e870f21f-9864-4609-a416-e553a87c5957",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7F0UQlzlnytDNcUg",
+          "name": "Gemini - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        4100,
+        -1060
+      ],
+      "id": "fed403e7-b0af-49f3-bde3-8c895353f4a2",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7F0UQlzlnytDNcUg",
+          "name": "Gemini - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 2
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -900,
+        -1860
+      ],
+      "id": "c81edeca-2628-40db-86e6-cc5b56ffbef7",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/tmp/lastCheckFile",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        -560,
+        -1860
+      ],
+      "id": "821ee80f-cf11-474e-8892-6b5558ee43c8",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        -280,
+        -1860
+      ],
+      "id": "9951ad0a-e797-4dec-b636-438f208e5926",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "content": "# Filter importance mail and send to me:\n- go to check the database : https://docs.google.com/spreadsheets/d/1zlrHwN8lU0VjVzM37yDzikZqFMYxnHDui-3sINUDaRw/edit?gid=1274588887#gid=1274588887",
+        "height": 1360,
+        "width": 5220,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        400,
+        140
+      ],
+      "id": "21044935-540f-4e65-8e95-76115e000dc8",
+      "name": "Sticky Note13"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        1060
+      ],
+      "id": "7186e22c-0b7e-416e-97e5-b04a60bbf516",
+      "name": "Google Gemini Chat Model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7F0UQlzlnytDNcUg",
+          "name": "Gemini - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=The follwoing is the news articles:\ntitle: {{ $node['Loop Over Items6'].json.title }}\ndescription: {{  $node['Loop Over Items6'].json.description }}\narticle_url_markdwon : {{ $json.data }}",
+        "options": {
+          "systemMessage": "=# Role:\nYou are a professional AI assistant specialized in news summarization.\nYou are adept at quickly understanding news content and extracting key information.\n\n# Task Goal:\nSummarize news information content and return the summary in **Markdown format**.\n\n## Input:\nYou will receive a news information, including title, description, and article_url_markdown.\n\nPlease note that the article_url_markdown contains the entire news webpage content. For subsequent analysis, you only need to extract and analyze content related to the title and description.\n\nIf article_url_markdown is absent, generate a summary from title and description.\n\n## Output Format:\nSummary results in Markdown format, containing the following two main sections:\n\n1. **Detailed Summary:**\n   * For each section heading in the news article, provide a summary of the content underneath.\n   * The summary should cover the core information and key arguments of that section.\n   * **Write this \"Detailed Summary\" in the same language as the input article.**\n\n2. **Takeaway:**\n   * Based on the **Detailed Summary**, summarize the most important core takeaways for the reader from the entire article.\n   * Consider what a reader needs to remember or understand most after reading this article.\n   * Present the takeaways as a Markdown unordered list (bulleted list).\n   * **If the input article language is NOT Traditional Chinese, write the \"Takeaway\" section in English. Otherwise, if the input is Traditional Chinese, write the \"Takeaway\" section in Traditional Chinese.**\n\n# Task procedure:\n1. **Extract Analysis Information:** Parse the markdown content and extract only the article content relevant to the title and description for analysis. Output this extracted content as {content}.\n\n2. **Content Analysis:** Carefully read and analyze the news article content {content} extracted in Step 1. Identify the language of the input article.\n\n3. **Section Summarization:** For each section under a heading in the article, extract key information and create a concise summary in **the same language as the input article**. Write these summaries in the **Detailed Summary** section.\n\n4. **Takeaway Synthesis:** Synthesize the content from the **Detailed Summary**. Consider the core value of the article and the key points readers should focus on.  Identify 3-5 takeaways and write them in **English if the input article is NOT Traditional Chinese. If the input is Traditional Chinese, write the \"Takeaway\" section in Traditional Chinese.** in the **Takeaway** section as a Markdown unordered list.\n\n**Example Output (Markdown Format - Language will vary based on input article):**\n\n```markdown\n\n## Takeaway\n**(Language of Takeaway section will be English if input is not Traditional Chinese, otherwise Traditional Chinese)**\n\n- Takeaway 1:  ... (Most important point one of the article - in English or Traditional Chinese based on input language)\n- Takeaway 2:  ... (Most important point two of the article - in English or Traditional Chinese based on input language)\n- Takeaway 3:  ... (Most important point three of the article - in English or Traditional Chinese based on input language)\n- ...\n\n## Detailed Summary\n**(Language of Detailed Summary section will be the same as input article)**\n\n### Section Heading One\n- Summary of content under Section Heading One... (in the same language as input)\n- ...\n\n### Section Heading Two\n- Summary of content under Section Heading Two... (in the same language as input)\n- ..."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        4200,
+        -1320
+      ],
+      "id": "9dc95011-b233-49ae-9a63-a840a49da2b9",
+      "name": "Summerization (take away)",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 1000
+    },
+    {
+      "parameters": {
+        "jsCode": "// 從前一個節點取出 JSON 資料的函數 (支援表情符號和特殊格式)\nfunction extractJsonFromPreviousNode() {\n  // 獲取前一個節點的輸出\n  const items = $input.all();\n  \n  // 檢查是否有資料\n  if (!items || items.length === 0) {\n    throw new Error('沒有接收到前一個節點的資料');\n  }\n  \n  // 從第一個項目中取出 output 字段\n  const rawOutput = items[0].json.output;\n  \n  if (!rawOutput) {\n    throw new Error('輸出中沒有找到 output 字段');\n  }\n  \n  try {\n    // 1. 首先嘗試完整的 Markdown 代碼塊提取\n    const strictJsonMatch = rawOutput.match(/```json\\s*([\\s\\S]*?)\\s*```/);\n    \n    if (strictJsonMatch && strictJsonMatch[1]) {\n      try {\n        return JSON.parse(strictJsonMatch[1]);\n      } catch (e) {\n        // 如果解析失敗，繼續嘗試其他方法\n        console.log(\"Markdown 代碼塊解析失敗，嘗試其他方法\");\n      }\n    }\n    \n    // 2. 嘗試直接查找並解析整個 JSON 對象\n    const firstBrace = rawOutput.indexOf('{');\n    const lastBrace = rawOutput.lastIndexOf('}');\n    \n    if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {\n      const jsonCandidate = rawOutput.substring(firstBrace, lastBrace + 1);\n      try {\n        return JSON.parse(jsonCandidate);\n      } catch (e) {\n        console.log(\"直接提取 JSON 對象失敗，嘗試最後方法\");\n      }\n    }\n    \n    // 3. 嘗試平衡括號法提取 JSON\n    let bracketCount = 0;\n    let startIndex = -1;\n    let endIndex = -1;\n    \n    for (let i = 0; i < rawOutput.length; i++) {\n      if (rawOutput[i] === '{') {\n        if (bracketCount === 0) {\n          startIndex = i;\n        }\n        bracketCount++;\n      } else if (rawOutput[i] === '}') {\n        bracketCount--;\n        if (bracketCount === 0 && startIndex !== -1) {\n          endIndex = i;\n          break;\n        }\n      }\n    }\n    \n    if (startIndex !== -1 && endIndex !== -1) {\n      const jsonCandidate = rawOutput.substring(startIndex, endIndex + 1);\n      try {\n        return JSON.parse(jsonCandidate);\n      } catch (e) {\n        throw new Error(`所有提取方法都失敗: ${e.message}`);\n      }\n    }\n    \n    // 4. 嘗試移除所有表情符號並再次解析\n    if (strictJsonMatch && strictJsonMatch[1]) {\n      // 移除表情符號的正則表達式\n      const noEmojiText = strictJsonMatch[1].replace(/[\\u{1F300}-\\u{1F6FF}\\u{1F900}-\\u{1F9FF}\\u{2600}-\\u{26FF}\\u{2700}-\\u{27BF}]/gu, '');\n      try {\n        return JSON.parse(noEmojiText);\n      } catch (e) {\n        console.log(\"移除表情符號後解析失敗\");\n      }\n    }\n    \n    throw new Error('無法在輸出中找到有效的 JSON 內容');\n  } catch (error) {\n    // 如果發生錯誤，返回一個簡單的錯誤對象，而不是拋出錯誤\n    // 這樣 n8n 工作流可以繼續執行而不會中斷\n    return { \n      error: true, \n      message: `解析 JSON 時出錯: ${error.message}`, \n      rawOutput: rawOutput \n    };\n  }\n}\n\n// 執行函數並返回結果\nreturn extractJsonFromPreviousNode();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2320,
+        -1900
+      ],
+      "id": "cd003f50-9f15-4e39-8cbd-2ae80cabc302",
+      "name": "json parser1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Get Search Kewrods": {
+      "main": [
+        [
+          {
+            "node": "Set Check Time",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to web-search-temp_news": {
+      "main": [
+        [
+          {
+            "node": "Wait4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XML1": {
+      "main": [
+        [
+          {
+            "node": "Split Out2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out2": {
+      "main": [
+        [
+          {
+            "node": "Get Variables1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Limit2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GNews API2",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "GNews API3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GNews API2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Split Out3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out3": {
+      "main": [
+        [
+          {
+            "node": "Wait2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "web-search_temp_input1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit2": {
+      "main": [
+        [
+          {
+            "node": "Get news with Not Checked Yet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "json parser2": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items5": {
+      "main": [
+        [
+          {
+            "node": "Limit3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent - Categorization2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Add to web-search-temp_news",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GNews API3": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "web-search_temp_input1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit3": {
+      "main": [
+        [
+          {
+            "node": "Get Categorized News",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP - jina (get markdown)1": {
+      "main": [
+        [
+          {
+            "node": "Summerization (take away)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown Parser": {
+      "main": [
+        [
+          {
+            "node": "Set Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Fields": {
+      "main": [
+        [
+          {
+            "node": "Add to news_database2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items6": {
+      "main": [
+        [],
+        [
+          {
+            "node": "HTTP - jina (get markdown)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Categorization2": {
+      "main": [
+        [
+          {
+            "node": "json parser2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "json parser3": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items7": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent - Categorization & Summerization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields4": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait3": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "Add to news_database1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS database1": {
+      "main": [
+        [
+          {
+            "node": "XML1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "lastCheckedTime1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "lastCheckedTime1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Variables1": {
+      "main": [
+        [
+          {
+            "node": "Time Check Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to news_database2": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to news_database1": {
+      "main": [
+        [
+          {
+            "node": "Wait3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Check Time": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Get Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Categorization": {
+      "main": [
+        [
+          {
+            "node": "json parser1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items8": {
+      "main": [
+        [],
+        [
+          {
+            "node": "AI Agent - Categorization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields5": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Add to news_database",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Variables": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to news_database": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Time Check Filter": {
+      "main": [
+        [
+          {
+            "node": "keyword filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Updated checked Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Updated checked Status": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent1 - summary in zh-tw",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Summary_tw": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Send email to remind me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "keyword filter": {
+      "main": [
+        [
+          {
+            "node": "Markdown1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get news with Not Checked Yet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Categorized News": {
+      "main": [
+        [
+          {
+            "node": "Filter3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add to article_to_publish": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Categorization & Summerization",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1 - summary in zh-tw": {
+      "main": [
+        [
+          {
+            "node": "Add Summary_tw",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent - Categorization & Summerization": {
+      "main": [
+        [
+          {
+            "node": "json parser3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get news_dataset": {
+      "main": [
+        [
+          {
+            "node": "Importance mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Importance mail": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Add to article_to_publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait4": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Categorization",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent - Categorization2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Summerization (take away)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "RSS database1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Search Kewrods",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get news_dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1 - summary in zh-tw",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Summerization (take away)": {
+      "main": [
+        [
+          {
+            "node": "Markdown Parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "json parser1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Taipei",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "d67d6ddc-1689-4e4e-be36-28658be14ac4",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
+  },
+  "id": "nbwMp5IAfmnelDvJ",
+  "tags": []
+}
