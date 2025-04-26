@@ -2,6 +2,12 @@
 
 此 n8n 工作流程旨在自動化從多個來源（GNews API、RSS Feed、Gmail）蒐集資訊，利用 AI 模型進行分類、評分、摘要，並將結果整理儲存至 Google Sheets 的過程。
 
+## 重要資源
+
+*   [工作流程文件](./Information_collecit_and_summary_agent.json)
+*   [Google Sheets 模板](https://drive.google.com/drive/folders/1XabN8iitvIj9reyP14dAVYylC8TPNwzw?usp=sharing)
+
+
 ## 工作流程概覽
 
 本工作流程主要分為以下幾個階段：
