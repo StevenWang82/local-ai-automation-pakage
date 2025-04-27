@@ -1,0 +1,65 @@
+{
+  "name": "error trigger",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -120,
+        -80
+      ],
+      "id": "04f0dfda-40d8-4e4c-92b7-60f678febcdf",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "stevenwang.col@gmail.com",
+        "subject": "Workflow Error Notification",
+        "emailType": "text",
+        "message": "=你的工作流出現問題，請盡速檢查。\n\n工作流：\n{{ $json.execution.url }}\n\n問題原因：\n{{ $json.execution.error.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        140,
+        -80
+      ],
+      "id": "322d808f-5b8e-471f-9b9d-b1cf59640674",
+      "name": "Gmail",
+      "webhookId": "699a42c3-bc56-48ef-b7b6-2f9f6751a1ce",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "IolonRfaigFNS9Ot",
+          "name": "Gmail account - clw"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "adf12e03-bdb1-457b-a887-c30c11fd3db0",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
+  },
+  "id": "lbHeKk9wCR7g09om",
+  "tags": []
+}
