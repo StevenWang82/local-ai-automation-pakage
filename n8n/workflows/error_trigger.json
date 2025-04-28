@@ -14,7 +14,6 @@
     },
     {
       "parameters": {
-        "sendTo": "stevenwang.col@gmail.com",
         "subject": "Workflow Error Notification",
         "emailType": "text",
         "message": "=你的工作流出現問題，請盡速檢查。\n\n工作流：\n{{ $json.execution.url }}\n\n問題原因：\n{{ $json.execution.error.message }}",
@@ -23,7 +22,7 @@
       "type": "n8n-nodes-base.gmail",
       "typeVersion": 2.1,
       "position": [
-        140,
+        200,
         -80
       ],
       "id": "322d808f-5b8e-471f-9b9d-b1cf59640674",
@@ -55,7 +54,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "adf12e03-bdb1-457b-a887-c30c11fd3db0",
+  "versionId": "3291e8e8-6f58-4791-9bfe-afe90d09b236",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
