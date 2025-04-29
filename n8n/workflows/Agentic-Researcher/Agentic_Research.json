@@ -3,7 +3,12 @@
   "nodes": [
     {
       "parameters": {
-        "options": {}
+        "public": true,
+        "initialMessages": "",
+        "options": {
+          "loadPreviousSession": "memory",
+          "title": "Research Agent ! 👋"
+        }
       },
       "type": "@n8n/n8n-nodes-langchain.chatTrigger",
       "typeVersion": 1.1,
@@ -17,7 +22,7 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.0-flash",
+        "modelName": "models/gemini-2.5-flash-preview-04-17",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -30,8 +35,8 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "7F0UQlzlnytDNcUg",
-          "name": "Gemini - clw"
+          "id": "qO5NASFECwvuJ7Li",
+          "name": "Gemini - CoL"
         }
       }
     },
@@ -76,7 +81,7 @@
         "promptType": "define",
         "text": "=請開始重新潤飾、改寫以下內容：\n {{ $json.chatInput }}",
         "options": {
-          "systemMessage": "=# 角色：\n你是一位專精於大型語言模型 (LLM) 專家\n\n# 目標：\n接收使用者提供的原始資訊，並將其轉換為對 LLM 而言更全面、更精確、且易於理解與遵循的優化版本。\n\n# 任務：\n1.  仔細閱讀並理解使用者傳入的原始資訊或提示詞的核心意圖與需求。\n2.  分析原始提示詞的不足之處，例如潛在的歧義、結構不清、指令不明確等。\n3.  根據對使用者意圖的理解，並考量 LLM 的處理特性，重寫並優化提示詞。\n\n# 輸出格式：\n* 輸出內容僅包含優化後的提示詞本身。\n* 回覆語言應與使用者原始輸入的語言相同。\n* 請勿直接回答用戶提問\n\n\n目前日期與時間：\n{{ $now }}"
+          "systemMessage": "=# 角色：\n你是一位專精於大型語言模型 (LLM) 專家\n\n# 目標：\n接收使用者提供的原始資訊，並將其轉換為對 LLM 而言更全面、更精確、且易於理解與遵循的優化版本。\n\n# 任務：\n1.  仔細閱讀並理解使用者傳入的原始資訊或提示詞的核心意圖與需求。\n2.  分析原始提示詞的不足之處，例如潛在的歧義、結構不清、指令不明確等。\n3.  根據對使用者意圖的理解，並考量 LLM 的處理特性，重寫並優化提示詞。\n\n# 輸出格式：\n* 輸出內容僅包含優化後的提示詞本身。\n* 回覆語言應與使用者原始輸入的語言相同。\n* 請勿直接回答用戶提問\n\n# 限制：\n* 請勿生成一個Agent prompt，而是扼要潤飾原始問題。\n\n\n目前日期與時間：\n{{ $now }}"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -229,7 +234,7 @@
         "promptType": "define",
         "text": "=用戶需求與提問：\n {{ $json.connent }}",
         "options": {
-          "systemMessage": "=# 角色：\n您是一個專業的研究助理，基於使用者的需求，「生成多個高度相關且且深入的搜尋主題」。\n\n# 任務：\n1. 分解主題：識別3-5個獨特但相互關聯的子主題，當被研究時，這將提供對主要搜尋主題的全面理解。\n2. 確保深度和相關性：每個搜尋主題應該足夠具體以允許深入探索，但又足夠廣泛以提供有意義的見解。\n3. 避免冗餘：這些搜尋主題，應該是獨特的，並涵蓋主要主題的不同方面。\n\n輸出選項：\n- 如果需要「外部知識」或「使用者要求資訊與查詢」，則路由到 \"agentic-researcher\" (研究)\n- 如果準備好進行內容創建，則路由到 \"agentic-writer\" (寫作者)\n\n輸出格式：\n\n## 輸出格式 (JSON)：\n{\n\"output\": [\"<第一個深入搜尋主題>\",\"<第二個深入搜尋主題>\", \"<第三個深入搜尋主題>\", /// 依此類推]\n}\n\n目前日期與時間：\n{{ $now }}\n\n\n## 最終注意事項\n您的回應應該簡潔、相關且結構良好，以有效引導深入研究。"
+          "systemMessage": "=# 角色：\n您是一個專業的研究規劃師，你擅長拆解使用者問題需求，「生成多個高度相關且且深入的搜尋主題」，以便後續研究。\n\n# 任務：\n1. 分解主題：識別3-5個獨特但相互關聯的子主題，這將提供對主要搜尋主題的全面理解。\n2. 確保深度和相關性：每個搜尋主題應該足夠具體以允許深入探索，但又足夠廣泛以提供有意義的見解。\n3. 避免冗餘：這些搜尋主題，應該是獨特的，並涵蓋主要主題的不同方面。\n\n\n輸出格式：\n- **請務必以JSON格式輸出**\n\n## 輸出格式 (JSON)：\n{\n\"output\": [\"<第一個深入搜尋主題>\",\"<第二個深入搜尋主題>\", \"<第三個深入搜尋主題>\", /// 依此類推]\n}\n\n目前日期與時間：\n{{ $now }}\n\n\n## 最終注意事項\n- 您的回應應該簡潔、相關且結構良好，以有效引導深入研究。\n- 除了回應子搜尋主題，無須其他任何說明回應。"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -1089,9 +1094,11 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "executionTimeout": -1,
+    "errorWorkflow": "lbHeKk9wCR7g09om"
   },
-  "versionId": "0085881e-d5d1-444b-9255-85fb2ba1d6ee",
+  "versionId": "bddd9a0b-05c6-463a-954d-727e3dd73ab8",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
