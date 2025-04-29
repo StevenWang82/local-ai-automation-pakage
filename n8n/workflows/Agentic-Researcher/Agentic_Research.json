@@ -1,0 +1,1101 @@
+{
+  "name": "Agentic-Research",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -920,
+        80
+      ],
+      "id": "74ca354c-36e9-4c20-a237-82f06b9c4233",
+      "name": "When chat message received",
+      "webhookId": "9e0aef8d-ef61-4ad6-a944-7645c4febfaa"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        540,
+        160
+      ],
+      "id": "ad4c0138-3dcb-4a83-ae78-9bfdf938c04a",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "7F0UQlzlnytDNcUg",
+          "name": "Gemini - clw"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 30
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        540,
+        -20
+      ],
+      "id": "781ab328-3b43-4bb5-99ff-a100a7bf0d0f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "af58493b-b8a8-4f4e-bff1-921b90a6c3c5",
+              "name": "sessionID",
+              "value": "={{ $json.sessionId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -440,
+        -140
+      ],
+      "id": "e8508ed7-1be9-4142-a0a5-bfc584ea8aac",
+      "name": "session_id"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=請開始重新潤飾、改寫以下內容：\n {{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "=# 角色：\n你是一位專精於大型語言模型 (LLM) 專家\n\n# 目標：\n接收使用者提供的原始資訊，並將其轉換為對 LLM 而言更全面、更精確、且易於理解與遵循的優化版本。\n\n# 任務：\n1.  仔細閱讀並理解使用者傳入的原始資訊或提示詞的核心意圖與需求。\n2.  分析原始提示詞的不足之處，例如潛在的歧義、結構不清、指令不明確等。\n3.  根據對使用者意圖的理解，並考量 LLM 的處理特性，重寫並優化提示詞。\n\n# 輸出格式：\n* 輸出內容僅包含優化後的提示詞本身。\n* 回覆語言應與使用者原始輸入的語言相同。\n* 請勿直接回答用戶提問\n\n\n目前日期與時間：\n{{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -560,
+        80
+      ],
+      "id": "cdb3638c-a538-4db3-99b2-c4fc3a2ae345",
+      "name": "start-agent"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        -140,
+        -120
+      ],
+      "id": "1811fdb8-45d0-4981-8a19-62d03d0aa168",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a952ad5e-2c46-46b6-9845-82289bf9c4d1",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionID }}",
+              "type": "string"
+            },
+            {
+              "id": "9a16f57d-d34b-4e89-8819-4df4f9c10049",
+              "name": "connent",
+              "value": "={{ $json.body.content }}",
+              "type": "string"
+            },
+            {
+              "id": "5cced10a-e6ab-4160-859b-2f5bb269948c",
+              "name": "agent",
+              "value": "planner",
+              "type": "string"
+            },
+            {
+              "id": "cca266bc-b782-43c3-9b8a-fac48695b51e",
+              "name": "webhook",
+              "value": "agentic-researcher",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -660,
+        -740
+      ],
+      "id": "892fc54a-bf9e-470f-814e-6f84e00612cb",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 從前一個節點取出 JSON 資料的函數\nfunction extractJsonFromPreviousNode() {\n  // 獲取前一個節點的輸出\n  const items = $input.all();\n  \n  // 檢查是否有資料\n  if (!items || items.length === 0) {\n    throw new Error('沒有接收到前一個節點的資料');\n  }\n  \n  // 從第一個項目中取出 output 字段\n  const rawOutput = items[0].json.output;\n  \n  if (!rawOutput) {\n    throw new Error('輸出中沒有找到 output 字段');\n  }\n  \n  try {\n    // 去除 Markdown 代碼塊標記 (```json 和 ```)\n    const jsonString = rawOutput.replace(/```json\\n|\\n```/g, '');\n    \n    // 解析 JSON 字符串為對象\n    const parsedData = JSON.parse(jsonString);\n    \n    // 返回解析後的 JSON 對象\n    return parsedData;\n  } catch (error) {\n    throw new Error(`解析 JSON 時出錯: ${error.message}`);\n  }\n}\n\n// 執行函數並返回結果\nreturn extractJsonFromPreviousNode();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -80,
+        -580
+      ],
+      "id": "e63e5f84-0a4d-4efb-8667-d2a56390279f",
+      "name": "json parser"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        100,
+        -720
+      ],
+      "id": "58e30cca-6e00-49b2-b948-b566fb4a4265",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agentic-planner",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -900,
+        -580
+      ],
+      "id": "f03b8650-16cd-478c-822d-9598e8f12182",
+      "name": "agentic-planner",
+      "webhookId": "c2b367bf-710f-44cb-a12d-013bdaed127d"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://host.docker.internal:5678/webhook/agentic-planner",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "sessionID",
+              "value": "={{ $json.sessionID }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "agent_from",
+              "value": "start-agent"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        -120
+      ],
+      "id": "fdd0d2cc-bc3c-4917-b267-b37e4eaab7a6",
+      "name": "HTTP Request to Planner"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=用戶需求與提問：\n {{ $json.connent }}",
+        "options": {
+          "systemMessage": "=# 角色：\n您是一個專業的研究助理，基於使用者的需求，「生成多個高度相關且且深入的搜尋主題」。\n\n# 任務：\n1. 分解主題：識別3-5個獨特但相互關聯的子主題，當被研究時，這將提供對主要搜尋主題的全面理解。\n2. 確保深度和相關性：每個搜尋主題應該足夠具體以允許深入探索，但又足夠廣泛以提供有意義的見解。\n3. 避免冗餘：這些搜尋主題，應該是獨特的，並涵蓋主要主題的不同方面。\n\n輸出選項：\n- 如果需要「外部知識」或「使用者要求資訊與查詢」，則路由到 \"agentic-researcher\" (研究)\n- 如果準備好進行內容創建，則路由到 \"agentic-writer\" (寫作者)\n\n輸出格式：\n\n## 輸出格式 (JSON)：\n{\n\"output\": [\"<第一個深入搜尋主題>\",\"<第二個深入搜尋主題>\", \"<第三個深入搜尋主題>\", /// 依此類推]\n}\n\n目前日期與時間：\n{{ $now }}\n\n\n## 最終注意事項\n您的回應應該簡潔、相關且結構良好，以有效引導深入研究。"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        -440,
+        -580
+      ],
+      "id": "ce1e84aa-d398-442a-8fad-8d4a3152d260",
+      "name": "planner-agent"
+    },
+    {
+      "parameters": {
+        "content": "## Starter\n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -940,
+        -140
+      ],
+      "id": "b42f6817-0996-4e55-a071-8deb75e6be5f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Planner\n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -940,
+        -880
+      ],
+      "id": "7bafb0c6-87ea-4751-9961-e61036886cdd",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Researcher\n",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -880
+      ],
+      "id": "604e23a1-f2c1-4d37-93c7-6c050f197451",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agentic-researcher",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        800,
+        -600
+      ],
+      "id": "e743d87b-b1c0-45c3-8a79-e7618f29f273",
+      "name": "agentic-researcher",
+      "webhookId": "c2b367bf-710f-44cb-a12d-013bdaed127d"
+    },
+    {
+      "parameters": {
+        "sseEndpoint": "http://host.docker.internal:5678/mcp/research-tool/sse"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1,
+      "position": [
+        1960,
+        -360
+      ],
+      "id": "244de6d1-677a-4a47-b872-4548f4585bab",
+      "name": "Research Tool"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=研究主題:「{{ $json.content }}」",
+        "options": {
+          "systemMessage": "=# 角色：\n關鍵字產生器與外部資料搜尋代理。\n\n# 任務目標：\n根據使用者提供的「研究主題」，產生一組相關且精確的關鍵字，並利用這些關鍵字進行外部資料查詢。\n\n# 輸入：\n使用者將提供一個明確的「研究主題」。\n\n# 輸出：\n請根據生成的關鍵字，執行外部搜尋，並回傳搜尋結果。\n\n# 執行步驟：\n1. 接收並理解使用者提供的「研究主題」。\n2. 分析主題的核心概念，產生能代表該主題的關鍵字。\n3. 使用產生的關鍵字執行外部資料搜尋\n4. 根據外部搜尋結果，撰寫一份完整報告。\n\n# 報告撰寫指南\n1.  **遵循格式要求** - 報告必須嚴格遵循 Markdown 格式規範，確保標題、列表、段落等元素的一致性。\n\n2.  **結構與格式化** - 報告應具有良好的結構，並以專業 **Markdown** 格式呈現。\n    *   **標題 (`#`)** – 依「Title」提供，使用頂級 Markdown 標題 (#)。\n    *   **內容主體** – 具有適當分節 (`##`, `###`, 段落) 的完全格式化研究內容。\n        *   使用標準的換行（空行）來區隔段落。\n        *   使用 `*` 或 `-` 搭配縮排來表示無序列表，使用 `1.` 等來表示有序列表。\n    *   不需「總覽」(Overview) 或「結論」(Conclusion) 的標題，只需輸出完整的報告內容即可。\n \n3.  **基於研究的內容** - 有邏輯地整合資訊，並確保報告經過充分研究、事實正確且專業地撰寫。\n    *   使用資訊豐富的寫法。提供盡可能多的細節。\n    *   保持思想的邏輯順序，有效地總結要點。\n\n\n## 報告範例\n\n## 範例輸出結構 (應用格式要求)\n\n# 限制\n1. 僅需回傳報告內容，無須再開頭作任何其他說明\n2. 最終報告請以符合台灣情境的繁體中文撰寫。\n\n\n目前日期與時間：\n{{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1720,
+        -600
+      ],
+      "id": "7ce3e33d-bbe9-42c2-9734-6a0b2a1750c2",
+      "name": "researcher-agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        1480,
+        -600
+      ],
+      "id": "1222de2d-220e-4112-af67-b291326825a7",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "content",
+        "include": "allOtherFields",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        1220,
+        -600
+      ],
+      "id": "d708a151-bbc3-4889-9f0c-1d5f9f3d341a",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 這個函數用於清理從AI Agent得到的markdown輸出\nfunction cleanupMarkdown(items) {\n  // 針對每個輸入項目進行處理\n  return items.map(item => {\n    let output = item.json.output || '';\n    \n    // 去除起始和結尾的markdown標記和換行符\n    output = output.replace(/^['\"]?```markdown\\s*\\n?/i, '');\n    output = output.replace(/\\n?```['\"]?$/i, '');\n    \n    // 去除多餘的跳脫字元(\\n)\n    output = output.replace(/\\\\n/g, '\\n');\n    \n    // 去除可能的JSON字符串引號\n    if (output.startsWith('\"') && output.endsWith('\"')) {\n      output = output.slice(1, -1);\n    }\n\n    // 返回清理後的markdown\n    return {\n      ...item.json,\n      output: output\n    };\n  });\n}\n\n// 使用function處理items並返回結果\nreturn cleanupMarkdown($input.all());"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        -600
+      ],
+      "id": "9ac97713-b5dc-402f-b6c0-f559748c8aed",
+      "name": "Markdown Parser3"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1T8F5xHaEvzoTdJ8SwmPHntiOsMyLWPfMxRG_3XPe5pY",
+          "mode": "list",
+          "cachedResultName": "Agentic-Research-Database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T8F5xHaEvzoTdJ8SwmPHntiOsMyLWPfMxRG_3XPe5pY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "research_output",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1T8F5xHaEvzoTdJ8SwmPHntiOsMyLWPfMxRG_3XPe5pY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "sessionId": "={{ $node['Loop Over Items'].json.sessionId }}",
+            "topic": "={{ $node['Loop Over Items'].json.content }}",
+            "research_output": "={{ $json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "sessionId",
+              "displayName": "sessionId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "research_output",
+              "displayName": "research_output",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2440,
+        -600
+      ],
+      "id": "26e4e7ba-7d24-49da-b530-1a3e754a33de",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "6m4TJIgG5mP2JOZi",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "sessionId"
+            },
+            {
+              "fieldToAggregate": "topic"
+            },
+            {
+              "fieldToAggregate": "research_output"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1640,
+        -840
+      ],
+      "id": "50004291-17ee-4069-8ca0-0e584524ac67",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4b255b50-2948-4641-84d0-83ca6d8c1de3",
+              "name": "sessionId",
+              "value": "={{ $json.sessionId[0] }}",
+              "type": "string"
+            },
+            {
+              "id": "76434230-da8f-491e-bda7-91206953e23f",
+              "name": "topic",
+              "value": "={{ $json.topic }}",
+              "type": "array"
+            },
+            {
+              "id": "a979fb7c-8e02-4a66-a08b-44ccb5aa2ce9",
+              "name": "research_output",
+              "value": "={{ $json.research_output }}",
+              "type": "array"
+            },
+            {
+              "id": "239a19c4-e98b-4f9a-b504-bf97bcb83e18",
+              "name": "webhook",
+              "value": "agentic-reporter",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1880,
+        -840
+      ],
+      "id": "2e2b638e-ebc5-462a-8d22-b49f7e1c86a1",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a952ad5e-2c46-46b6-9845-82289bf9c4d1",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionID }}",
+              "type": "string"
+            },
+            {
+              "id": "9a16f57d-d34b-4e89-8819-4df4f9c10049",
+              "name": "content",
+              "value": "={{ $json.body.content }}",
+              "type": "array"
+            },
+            {
+              "id": "5cced10a-e6ab-4160-859b-2f5bb269948c",
+              "name": "agent",
+              "value": "={{ $json.body.agent }}",
+              "type": "string"
+            },
+            {
+              "id": "cca266bc-b782-43c3-9b8a-fac48695b51e",
+              "name": "webhook",
+              "value": "agentic-researcher",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1000,
+        -600
+      ],
+      "id": "d79ca33f-6b02-482f-945e-47e10d6d3b5c",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "content": "## Reporter",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -220
+      ],
+      "id": "9aeb7910-8832-4f29-8b9b-f5878b20ed2a",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "mode": "markdownToHtml",
+        "markdown": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        0
+      ],
+      "id": "f1ec55fa-3a31-4e4f-bef8-15d043994aab",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "sendTo": "example@gmail.com",
+        "subject": "您的研究報告已產生",
+        "message": "={{ $json.data }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        2120,
+        0
+      ],
+      "id": "7c1426d3-b394-4731-8f02-34d5e0cb9038",
+      "name": "Gmail",
+      "webhookId": "bc12bb0e-18eb-46f3-935d-96fd85323f4d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "eltvBNs9oxZa8Jc8",
+          "name": "Gmail - CoL"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agentic-reporter",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "3285e773-5b91-443f-b2e7-49f9bcdec346",
+      "name": "agentic-writer",
+      "webhookId": "c2b367bf-710f-44cb-a12d-013bdaed127d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a952ad5e-2c46-46b6-9845-82289bf9c4d1",
+              "name": "sessionId",
+              "value": "={{ $json.body.sessionID }}",
+              "type": "string"
+            },
+            {
+              "id": "9a16f57d-d34b-4e89-8819-4df4f9c10049",
+              "name": "content",
+              "value": "={{ $json.body.content }}",
+              "type": "array"
+            },
+            {
+              "id": "5cced10a-e6ab-4160-859b-2f5bb269948c",
+              "name": "agent",
+              "value": "={{ $json.body.agent }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1060,
+        0
+      ],
+      "id": "a718dc95-06f2-48fa-8c05-e1f5d0848c6a",
+      "name": "Edit Fields3"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 這個函數用於清理從AI Agent得到的markdown輸出\nfunction cleanupMarkdown(items) {\n  // 針對每個輸入項目進行處理\n  return items.map(item => {\n    let output = item.json.output || '';\n    \n    // 去除起始和結尾的markdown標記和換行符\n    output = output.replace(/^['\"]?```markdown\\s*\\n?/i, '');\n    output = output.replace(/\\n?```['\"]?$/i, '');\n    \n    // 去除多餘的跳脫字元(\\n)\n    output = output.replace(/\\\\n/g, '\\n');\n    \n    // 去除可能的JSON字符串引號\n    if (output.startsWith('\"') && output.endsWith('\"')) {\n      output = output.slice(1, -1);\n    }\n\n    // 返回清理後的markdown\n    return {\n      ...item.json,\n      output: output\n    };\n  });\n}\n\n// 使用function處理items並返回結果\nreturn cleanupMarkdown($input.all());"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1720,
+        0
+      ],
+      "id": "4d359357-1501-46ad-af71-827864fd9613",
+      "name": "Markdown Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=研究子主題報告:「{{ $json.content }}」",
+        "options": {
+          "systemMessage": "=# 角色：\n多源資訊整合與報告撰寫專家。\n\n# 任務目標：\n接收原始作者提出的問題，以及多份與該問題相關的子主題研究報告。你的職責是從這些子主題報告中提取、分析、整合所有相關資訊，並撰寫一份結構嚴謹、內容詳實的最終報告，直接且完整地回應原始作者的問題。\n\n# 輸入：\n1.  **原始作者的問題：** 該問題是本次報告撰寫的核心目的。\n2.  **子主題報告內容：** 一份或多份與原始問題相關的子主題研究報告的完整文本內容。\n\n# 輸出要求：\n請根據輸入的資訊，生成一份最終報告，嚴格遵循以下格式與內容要求：\n\n1.  **格式標準：** 報告必須使用標準 Markdown 格式。\n2.  **主標題：** ，請根據原始問題與子主題報告內容擬定一個合適的標題，作為頂級 Markdown 標題 `#`。\n3.  **內容結構：**\n    * 報告主體應具有邏輯分明的結構，使用適當的 Markdown 子標題 (`##`, `###`) 來組織不同區段的內容。\n    * 段落之間使用標準的空行來分隔。\n    * 使用 Markdown 列表格式呈現條列式資訊：無序列表使用 `*` 或 `-` 搭配縮排；有序列表使用 `1.` 等。\n4.  **區段分隔：** 在主要的不同內容區段之間，使用水平線（`---` 或 `***`，至少三個連續符號）進行視覺分隔。\n5.  **內容要求：**\n    * 報告內容必須完全基於你所接收到的子主題報告中的資訊。\n    * 有邏輯地整合來自所有相關子報告的觀點、數據和細節。\n    * 保持專業、客觀的語氣，確保內容經過充分「研究」（即基於提供的材料）且事實準確（依賴提供的材料）。\n    * 提供盡可能多的細節，以確保報告內容豐富。\n    * 核心目標是直接、清晰、完整地回答原始作者的問題，並保持思想的邏輯連貫性。\n\n\n目前日期與時間：\n{{ $now }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.8,
+      "position": [
+        1340,
+        0
+      ],
+      "id": "12a0840a-ed96-4e85-9fbb-2a7b60ecaec7",
+      "name": "reporter-agent"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://host.docker.internal:5678/webhook/{{ $json.webhook }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "sessionID",
+              "value": "={{ $json.sessionId }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.output }}"
+            },
+            {
+              "name": "agent",
+              "value": "={{ $json.agent }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        280,
+        -580
+      ],
+      "id": "4a272db7-a92f-47f6-a918-9ca7464da798",
+      "name": "HTTP Request to Researcher"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://host.docker.internal:5678/webhook/{{ $json.webhook }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "sessionID",
+              "value": "={{ $json.sessionId }}"
+            },
+            {
+              "name": "content",
+              "value": "={{ $json.research_output }}"
+            },
+            {
+              "name": "agent",
+              "value": "=researcher"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2140,
+        -840
+      ],
+      "id": "2dc8336a-20db-4081-a613-48e32239588c",
+      "name": "HTTP Request to Reporter"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "start-agent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "session_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "start-agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "planner-agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "researcher-agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "reporter-agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "start-agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "planner-agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "researcher-agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "reporter-agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "session_id": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "start-agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request to Planner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "planner-agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "json parser": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request to Researcher",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agentic-planner": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "planner-agent": {
+      "main": [
+        [
+          {
+            "node": "json parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agentic-researcher": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Research Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "researcher-agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "researcher-agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown Parser3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "researcher-agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown Parser3": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request to Reporter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "agentic-writer": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields3": {
+      "main": [
+        [
+          {
+            "node": "reporter-agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Markdown Parser": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reporter-agent": {
+      "main": [
+        [
+          {
+            "node": "Markdown Parser",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "0085881e-d5d1-444b-9255-85fb2ba1d6ee",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
+  },
+  "id": "MHHosJDV2PaxxVNE",
+  "tags": []
+}

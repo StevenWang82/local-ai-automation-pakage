@@ -1,0 +1,126 @@
+{
+  "name": "Web Search Tool - MCP",
+  "nodes": [
+    {
+      "parameters": {
+        "toolDescription": "Use this tool for acquiring the markdowm content from a url.",
+        "url": "=https://r.jina.ai/{url}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "url",
+              "description": "The url that user want to its full content in the format of markdown"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        80,
+        -160
+      ],
+      "id": "ce4cc1fa-f74f-4e2a-890d-344eb650f49c",
+      "name": "get markfown"
+    },
+    {
+      "parameters": {
+        "path": "research-tool"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 1,
+      "position": [
+        -180,
+        -400
+      ],
+      "id": "ca10ff7c-b849-400b-8a0e-2d434ac8b4a8",
+      "name": "Web Search MCP",
+      "webhookId": "609f99f5-8622-4966-90b0-efbee5fb802c"
+    },
+    {
+      "parameters": {
+        "toolDescription": "用於查詢外部知識的工具",
+        "method": "POST",
+        "url": "https://api.tavily.com/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "parametersHeaders": {
+          "values": [
+            {
+              "name": "Content-Type",
+              "valueProvider": "fieldValue",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": {search_term},\n  \"topic\": \"general\",\n  \"search_depth\": \"advanced\",\n  \"chunks_per_source\": 3,\n  \"max_results\": 5,\n  \"include_raw_content\": true\n}",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "search_term",
+              "description": "用戶想要了解的知識",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        -160
+      ],
+      "id": "5b9cec52-a76a-434c-abe1-981fe492b255",
+      "name": "Tavily",
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "9fw75cIENlc2UaMx",
+          "name": "Unnamed credential"
+        },
+        "httpHeaderAuth": {
+          "id": "OhDVkgUUiNZPSA83",
+          "name": "Tavily - Header Auth - clw"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "get markfown": {
+      "ai_tool": [
+        [
+          {
+            "node": "Web Search MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tavily": {
+      "ai_tool": [
+        [
+          {
+            "node": "Web Search MCP",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5205aeb6-2d74-4c58-8bde-d909539afb8b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0903d4738bfceb212abe7417386268a386894b588376561033446cb99ecbb6eb"
+  },
+  "id": "0PstbnvspYFr6hiV",
+  "tags": []
+}
