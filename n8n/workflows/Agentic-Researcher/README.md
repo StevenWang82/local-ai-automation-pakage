@@ -1,14 +1,18 @@
+
 # n8n 自動化工作流：多代理人研究 Agent (Agentic-Research)
 
 此 n8n 工作流程利用多個協作的 AI 代理人（Agent）來執行一個完整的研究任務。從接收使用者查詢開始，逐步進行提示詞優化、研究主題規劃、子主題深入研究，最終彙整成一份詳細報告並透過 Email 發送。
 
 此 Agentic Research Agent的特色在於透過Webhook串聯AI Agent，並讓所有Agent的輸入/輸出都存放在相同的memory，提高整體協作效率與準確。
 
+![agentic-deepresearch-agent](./Agentic_Research.png)
+
 ## 重要資源
 
 *   [工作流程文件](./Agentic_Research.json)
 *   [Research Tool MCP Client](./Researcb_Tool_MCP_Trigger.json)
 *   [Google Sheet template](https://docs.google.com/spreadsheets/d/16mxJd9X8MKEZiHs2aWbOopi0pybT53SWaXqSQrt3yWQ/edit?usp=sharing) (用於儲存研究過程中的資料)
+!
 
 ## 工作流程概覽
 
